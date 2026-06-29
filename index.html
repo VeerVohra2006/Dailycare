@@ -1883,10 +1883,64 @@ let _medDraft={},_medEditIdx=-1;
 
 function openAddMed(){
   if(activeMember()?.isPeer) return toast('External accounts are read-only','warn');
-  _medDraft={name:'',kind:'tablet',qty:1,colour:MED_COLOURS[0],food:'After meals',notes:'',reminderTimes:[]};
-  _medEditIdx=-1;
-  openModal('Add a Medicine',buildMedModal());showMedStep(0);
+  _medDraft = { name: '', kind: 'tablet', qty: 1, colour: MED_COLOURS[0], food: 'After meals', notes: '', reminderTimes: [] }; 
+  _medEditIdx = -1;
+  
+  openModal('Add a Medicine', `
+    <div class="form-group">
+      <label>Medicine Name</label>
+      <input type="text" id="mName" placeholder="e.g. Paracetamol">
+    </div>
+    <div class="form-group">
+      <label>Reminder Time (HH:MM)</label>
+      <input type="time" id="mTime" style="-webkit-appearance: none; min-height: 58px;" inputmode="numeric">
+    </div>
+    <button class="btn btn-forest btn-full" onclick="saveMedAndLaunchClock()">Save &amp; Open Phone Clock App</button>
+  `);
 }
+
+function saveMedAndLaunchClock() {
+  const mb = activeMember(); if(!mb || mb.isPeer) return;
+  const name = document.getElementById('mName').value.trim();
+  const clockTime = document.getElementById('mTime').value;
+
+  if(!name) return toast('Please enter the medicine name', 'err');
+  if(!clockTime) return toast('Please pick a time', 'err');
+
+  const obj = {
+    name: name,
+    kind: _medDraft.kind || 'tablet',
+    qty: 1,
+    food: 'After meals',
+    notes: '',
+    colour: MED_COLOURS[0],
+    reminderTimes: [clockTime],
+    takenTimes: {},
+    notifiedTimes: {}
+  };
+
+  mb.medicines.push(normMed(obj));
+  saveState(); 
+  render(); 
+  closeModal();
+  
+  // 1. Sync schedule with Railway server for background pushes
+  syncPushProfileToServer();
+  
+  // 2. Instantly force launch your phone's native Clock/Alarm application
+  const [hours, minutes] = clockTime.split(':');
+  const isAndroid = /android/i.test(navigator.userAgent);
+  
+  if (isAndroid) {
+    // Automatically creates the alarm pre-filled with the time and label on Android
+    window.location.href = `intent://page/AlarmClock?hour=${hours}&minutes=${minutes}&message=${encodeURIComponent('Take ' + name)}&skipUi=false#Intent;scheme=android-app;end`;
+  } else {
+    // iOS deep link to launch Apple's native Clock App
+    window.location.href = 'clock-alarm://';
+    toast(`Clock app opened! Set an alarm for ${clockTime} labelled: Take ${name}`, 'ok');
+  }
+}
+
 function editMed(i){
   const mb=activeMember();if(!mb||mb.isPeer)return;
   _medDraft={...mb.medicines[i],reminderTimes:[...(mb.medicines[i].reminderTimes||[])]};
