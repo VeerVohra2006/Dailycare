@@ -1892,14 +1892,14 @@ function openAddMed(){
       <input type="text" id="mName" placeholder="e.g. Paracetamol">
     </div>
     <div class="form-group">
-      <label>Reminder Time (HH:MM)</label>
+      <label>Reminder Time (Tap to pick time)</label>
       <input type="time" id="mTime" style="-webkit-appearance: none; min-height: 58px;" inputmode="numeric">
     </div>
-    <button class="btn btn-forest btn-full" onclick="saveMedAndLaunchClock()">Save &amp; Open Phone Clock App</button>
+    <button class="btn btn-forest btn-full" onclick="saveMedClean()">Save Medicine &amp; Set Reminder</button>
   `);
 }
 
-function saveMedAndLaunchClock() {
+function saveMedClean() {
   const mb = activeMember(); if(!mb || mb.isPeer) return;
   const name = document.getElementById('mName').value.trim();
   const clockTime = document.getElementById('mTime').value;
@@ -1918,6 +1918,26 @@ function saveMedAndLaunchClock() {
     takenTimes: {},
     notifiedTimes: {}
   };
+
+  mb.medicines.push(normMed(obj));
+  saveState(); 
+  render(); 
+  closeModal();
+  
+  // 1. Sync schedule with Railway server for background pushes
+  syncPushProfileToServer();
+  
+  // 2. Safe, cross-platform hardware handling
+  const isAndroid = /android/i.test(navigator.userAgent);
+  if (isAndroid) {
+    // Android intents still work fully natively
+    const [hours, minutes] = clockTime.split(':');
+    window.location.href = `intent://page/AlarmClock?hour=${hours}&minutes=${minutes}&message=${encodeURIComponent('Take ' + name)}&skipUi=false#Intent;scheme=android-app;end`;
+  } else {
+    // iOS: Let the server-side Web Push notifications handle the lock screen wake-up
+    toast(`✓ ${name} saved! The server will send a push reminder at ${fmt12(clockTime)}.`, 'ok');
+  }
+}
 
   mb.medicines.push(normMed(obj));
   saveState(); 
