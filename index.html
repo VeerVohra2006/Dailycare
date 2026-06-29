@@ -1301,7 +1301,7 @@ const STORE_KEY = 'dc_v5';
 const DATE_KEY  = 'dc_date_v5';
 const PUBLIC_RELAY_BASE    = 'https://ntfy.sh/dc_live_sync_';
 // ↓ Update both after deploying backend to Railway
-const DAILYCARE_BACKEND_URL = 'https://dailycare-backend-production.up.railway.app/';
+const DAILYCARE_BACKEND_URL = 'https://your-backend.up.railway.app';
 const VAPID_PUBLIC_KEY      = 'BFfqTYxfvJRXEgv2yJ_rILUJ1mTHvo2L9LV3-iKGlIuNYU7s96zGr2p3KnEJZHvMMGpvdrsD5YaYU1M0vOO_Sfw';
 
 const MED_COLOURS = [
@@ -2915,14 +2915,56 @@ function showIOSInstallBanner() {
 // Called when receiver opens a shared profile tab.
 // Asks for notification permission, subscribes, and saves
 // the subscription to the backend keyed by channelId.
+// ══════════════════════════════════════════════════════════════
+//  SCHEDULE SYNC — sends senior's medicine times to backend
+//  so the cron job can fire Web Push at the exact time every day
+//  even when the phone is locked or the app is closed.
+// ══════════════════════════════════════════════════════════════
+async function saveScheduleToBackend() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  if (isIOS && !isPWA()) return;  // push not available yet on this device
+
+  try {
+    const reg  = await navigator.serviceWorker.ready;
+    const perm = Notification.permission;
+    if (perm !== 'granted') return;  // user hasn't allowed notifications yet
+
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) return;  // not subscribed yet — subscribeToPush handles that
+
+    const me       = state.members[0];
+    const userId   = me.id || 'user_' + generateChannelId(me.name + '_id');
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata';
+
+    // Only send medicines that have reminder times set
+    const medicines = (me.medicines || [])
+      .filter(m => m.reminderTimes && m.reminderTimes.length > 0)
+      .map(m => ({ name: m.name, reminderTimes: m.reminderTimes }));
+
+    await fetch(DAILYCARE_BACKEND_URL + '/save-schedule', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId,
+        name:         me.name,
+        subscription: sub.toJSON(),
+        timezone,
+        medicines
+      })
+    });
+
+    console.log(`[DailyCare] Schedule saved — ${medicines.length} medicine(s) with reminders`);
+  } catch(e) {
+    console.warn('[DailyCare] saveScheduleToBackend failed:', e);
+  }
+}
+
 async function subscribeToPush(secret) {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    // Platform doesn't support push — show iOS gate if needed
     if (isIOS) showIOSInstallBanner();
     return;
   }
 
-  // iOS requires PWA install for push
   if (isIOS && !isPWA()) {
     showIOSInstallBanner();
     return;
@@ -2933,7 +2975,6 @@ async function subscribeToPush(secret) {
     const perm = await Notification.requestPermission();
     if (perm !== 'granted') return;
 
-    // Subscribe or reuse existing subscription
     let sub = await reg.pushManager.getSubscription();
     if (!sub) {
       sub = await reg.pushManager.subscribe({
@@ -2942,15 +2983,19 @@ async function subscribeToPush(secret) {
       });
     }
 
-    // Save to backend keyed by this peer's push channel
+    // Save subscription for on-demand caregiver pings
     const channelId = generateChannelId(secret + '_push_v1');
     await fetch(DAILYCARE_BACKEND_URL + '/save-subscription', {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ channelId, subscription: sub.toJSON() })
     });
 
     console.log('[DailyCare] Push subscription saved for channel', channelId.slice(0, 8));
+
+    // Also save the senior's own medicine schedule for cron reminders
+    await saveScheduleToBackend();
+
   } catch(e) {
     console.warn('[DailyCare] Push subscribe failed:', e);
   }
