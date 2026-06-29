@@ -1,0 +1,2983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
+<title>DailyCare — Family Medicine &amp; Hydration Tracker</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a4731">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DailyCare">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:wght@500;700&display=swap">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  /* Core palette */
+  --forest:   #1a4731;
+  --forest2:  #245c40;
+  --forest3:  #2d7a55;
+  --leaf:     #4caf7d;
+  --leaf-lt:  #d4eddf;
+  --leaf-xlt: #edf7f1;
+  --gold:     #c9a84c;
+  --gold-lt:  #fdf3dc;
+  --gold-xlt: #fffcf4;
+  --coral:    #d95f4b;
+  --coral-lt: #fde8e5;
+  --coral-xlt:#fff4f2;
+  --sky:      #3b82c4;
+  --sky-lt:   #dbeafe;
+  --cream:    #fdfaf5;
+  --paper:    #ffffff;
+  --ink:      #1c2b1e;
+  --ink2:     #344a38;
+  --ink3:     #6b7f6e;
+  --ink4:     #9aaa9d;
+  --rule:     #e2ebe4;
+  --rule2:    #c8d9cb;
+
+  --r-xl: 24px; --r-lg: 18px; --r-md: 12px; --r-sm: 8px;
+  --sh: 0 2px 16px rgba(26,71,49,0.08);
+  --sh-lg: 0 8px 40px rgba(26,71,49,0.15);
+  --sh-card: 0 4px 24px rgba(26,71,49,0.1);
+
+  /* Type scale — large for senior readability */
+  --t-3xl: 2.2rem;
+  --t-2xl: 1.75rem;
+  --t-xl:  1.4rem;
+  --t-lg:  1.2rem;
+  --t-md:  1.05rem;
+  --t-sm:  0.95rem;
+  --t-xs:  0.82rem;
+}
+
+html{font-size:16px;height:100%;}
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'Lato','Helvetica Neue',Arial,sans-serif;
+  font-size:var(--t-md);
+  line-height:1.55;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ═══ HEADER ═══ */
+header{
+  position:sticky;top:0;z-index:200;
+  background:linear-gradient(160deg, var(--forest) 0%, var(--forest2) 100%);
+  box-shadow:0 2px 20px rgba(0,0,0,0.25);
+}
+.header-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.85rem 1.1rem 0.7rem;
+}
+.logo-wrap{display:flex;align-items:center;gap:0.6rem;}
+.logo-icon{
+  width:38px;height:38px;border-radius:10px;
+  background:rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;
+}
+.logo-text{
+  font-family:'Lato',sans-serif;font-weight:900;
+  font-size:var(--t-lg);color:white;letter-spacing:-0.3px;
+}
+.logo-sub{font-size:var(--t-xs);color:rgba(255,255,255,0.65);font-weight:400;margin-top:-2px;}
+.clock-wrap{text-align:right;}
+.clock-main{
+  font-size:var(--t-2xl);font-weight:900;color:white;
+  line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.5px;
+}
+.clock-ampm{font-size:var(--t-xs);font-weight:700;color:rgba(255,255,255,0.75);letter-spacing:1px;margin-left:3px;}
+.clock-date{font-size:var(--t-xs);color:rgba(255,255,255,0.6);margin-top:2px;}
+
+/* ═══ MEMBER TABS ═══ */
+.member-tabs-wrap{
+  background:rgba(0,0,0,0.18);
+  border-top:1px solid rgba(255,255,255,0.08);
+  padding:0.6rem 1rem 0;
+  display:flex;align-items:flex-end;gap:6px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.member-tabs-wrap::-webkit-scrollbar{display:none;}
+.member-tab{
+  display:flex;align-items:center;gap:8px;
+  padding:0.6rem 1rem 0.65rem;
+  border-radius:var(--r-md) var(--r-md) 0 0;
+  background:rgba(255,255,255,0.1);
+  border:none;cursor:pointer;
+  font-family:'Lato',sans-serif;font-size:var(--t-sm);font-weight:700;
+  color:rgba(255,255,255,0.65);
+  white-space:nowrap;
+  transition:all 0.2s;flex-shrink:0;min-height:44px;
+}
+.member-tab.active{
+  background:var(--cream);
+  color:var(--forest);
+  box-shadow:0 -2px 12px rgba(0,0,0,0.1);
+}
+.member-tab .tab-avatar{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:900;color:white;flex-shrink:0;
+}
+.member-tab.active .tab-avatar{box-shadow:0 1px 6px rgba(0,0,0,0.2);}
+.add-member-btn{
+  display:flex;align-items:center;justify-content:center;
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,0.15);border:2px dashed rgba(255,255,255,0.4);
+  cursor:pointer;color:white;font-size:1.3rem;
+  transition:all 0.2s;flex-shrink:0;margin-bottom:6px;
+}
+.add-member-btn:hover{background:rgba(255,255,255,0.25);}
+
+/* ═══ NAV ═══ */
+nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--paper);
+  border-top:2px solid var(--rule);
+  display:flex;
+  box-shadow:0 -4px 24px rgba(26,71,49,0.1);
+}
+.nav-btn{
+  flex:1;padding:0.55rem 0.2rem 0.5rem;
+  border:none;background:none;
+  color:var(--ink4);
+  font-family:'Lato',sans-serif;
+  font-size:0.7rem;font-weight:700;
+  cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  border-top:3px solid transparent;
+  min-height:60px;transition:all 0.18s;
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-icon{font-size:1.5rem;line-height:1;display:flex;align-items:center;justify-content:center;}
+.nav-btn.active{color:var(--forest);border-top-color:var(--forest);background:var(--leaf-xlt);}
+
+/* ═══ MAIN ═══ */
+main{padding:1rem 1rem 7rem;max-width:600px;margin:0 auto;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fadeUp 0.25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ═══ CARD ═══ */
+.card{
+  background:var(--paper);border:1.5px solid var(--rule);
+  border-radius:var(--r-xl);padding:1.3rem;
+  margin-bottom:0.9rem;box-shadow:var(--sh);
+}
+.card-title{
+  font-size:var(--t-lg);font-weight:900;color:var(--ink);
+  margin-bottom:0.9rem;display:flex;align-items:center;gap:0.5rem;
+}
+.card-title .ct-sub{
+  font-size:var(--t-xs);font-weight:700;color:var(--ink4);
+  margin-left:auto;
+}
+
+/* ═══ MEMBER CARE CARD (home hero) ═══ */
+.care-card{
+  background:linear-gradient(145deg, var(--forest) 0%, var(--forest3) 100%);
+  border-radius:var(--r-xl);padding:1.4rem;
+  margin-bottom:0.9rem;
+  box-shadow:0 8px 32px rgba(26,71,49,0.25);
+  position:relative;overflow:hidden;
+}
+.care-card::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(255,255,255,0.05);pointer-events:none;
+}
+.cc-top{display:flex;align-items:flex-start;gap:1rem;}
+.cc-avatar{
+  width:64px;height:64px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;
+  color:white;border:3px solid rgba(255,255,255,0.3);
+  box-shadow:0 4px 16px rgba(0,0,0,0.2);
+}
+.cc-info{flex:1; min-width: 0;}
+.cc-name{
+  font-family:'Playfair Display',serif;font-size:var(--t-xl);
+  font-weight:700;color:white;line-height:1.1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cc-relation{
+  font-size:var(--t-xs);font-weight:700;
+  color:rgba(255,255,255,0.65);letter-spacing:1px;
+  text-transform:uppercase;margin-top:3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cc-next{
+  margin-top:1rem;
+  background:rgba(255,255,255,0.12);
+  border-radius:var(--r-lg);padding:0.9rem 1rem;
+  display:flex;align-items:center;gap:0.8rem;
+  min-width: 0;
+}
+.cc-next-time{
+  font-size:var(--t-2xl);font-weight:900;color:white;
+  line-height:1;font-variant-numeric:tabular-nums;min-width:90px;
+}
+.cc-next-label{font-size:var(--t-xs);font-weight:700;color:rgba(255,255,255,0.65);}
+.cc-next-name{
+  font-size:var(--t-md);font-weight:900;color:white;margin-top:2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cc-countdown{
+  margin-left:auto;flex-shrink:0;
+  font-size:var(--t-xs);font-weight:900;
+  background:rgba(255,255,255,0.18);
+  color:white;border-radius:30px;padding:6px 12px;
+  max-width: 120px; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cc-countdown.ct-due{background:rgba(201,168,76,0.35);color:var(--gold-lt);}
+.cc-countdown.ct-overdue{
+  background:rgba(217,95,75,0.4);color:#ffd4ce;
+  animation:blink 1s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.cc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-top:0.9rem;}
+.cc-stats {
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-top:0.9rem;
+}
+.cc-stat{
+  background:rgba(255,255,255,0.1);border-radius:var(--r-md);
+  padding:0.7rem 0.5rem;text-align:center;
+}
+.cc-stat-val{font-size:var(--t-xl);font-weight:900;color:white;line-height:1;}
+.cc-stat-lbl{font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+
+/* ═══ SCHEDULE SLOTS ═══ */
+.schedule-slot{
+  display:flex;align-items:center;gap:0.8rem;
+  padding:1rem;background:var(--leaf-xlt);
+  border:1.5px solid var(--rule);border-radius:var(--r-lg);
+  margin-bottom:0.75rem;transition:all 0.2s;
+  min-width: 0;
+}
+.schedule-slot.s-upcoming{background:var(--paper);border-color:var(--rule);}
+.schedule-slot.s-due{border-color:var(--gold);background:var(--gold-xlt);}
+.schedule-slot.s-overdue{border-color:var(--coral);background:var(--coral-xlt);}
+.schedule-slot.s-taken{opacity:0.5;border-color:var(--leaf-lt)!important;background:var(--leaf-xlt)!important;}
+
+.ss-time-col{text-align:center;min-width:82px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.ss-time{font-size:var(--t-lg);font-weight:900;color:var(--forest);line-height:1;}
+.ss-time.ov{color:var(--coral);}
+.ss-time.du{color:var(--gold);}
+.ss-ampm{font-size:var(--t-xs);font-weight:700;color:var(--ink3);}
+
+/* Countdown */
+.ss-cd{
+  display:block;margin-top:4px;
+  font-size:0.72rem;font-weight:800;
+  padding:3px 8px;border-radius:20px;width:100%;text-align:center;
+  background:var(--leaf-lt);color:var(--forest2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ss-cd.ct-due{background:var(--gold-lt);color:var(--gold);}
+.ss-cd.ct-overdue{background:var(--coral-lt);color:var(--coral);animation:blink 1s step-end infinite;}
+
+.ss-info{flex:1; min-width: 0; padding-right: 4px;}
+.ss-name{
+  font-size:var(--t-md);font-weight:900;color:var(--ink);margin-bottom:2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ss-detail{font-size:var(--t-xs);color:var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.ss-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:3px 10px;border-radius:20px;
+  font-size:var(--t-xs);font-weight:800;margin-top:5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 100%;
+}
+.b-green{background:var(--leaf-lt);color:var(--forest2);}
+.b-amber{background:var(--gold-lt);color:var(--gold);}
+.b-red{background:var(--coral-lt);color:var(--coral);}
+.b-teal{background:var(--sky-lt);color:var(--sky);}
+
+.ss-check{
+  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  border:2.5px solid var(--forest);background:var(--forest);
+  color:white;font-size:1.3rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.18s;box-shadow:0 3px 12px rgba(26,71,49,0.3);
+}
+.ss-check.ov{border-color:var(--coral);background:var(--coral);box-shadow:0 3px 12px rgba(217,95,75,0.3);}
+.ss-check:active{transform:scale(0.88);}
+
+/* ═══ BUTTONS ═══ */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:0.45rem;
+  padding:0.9rem 1.3rem;border-radius:var(--r-lg);
+  font-family:'Lato',sans-serif;font-size:var(--t-md);font-weight:700;
+  cursor:pointer;border:2px solid;min-height:60px;
+  transition:all 0.18s;text-align:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:active{transform:scale(0.96);}
+.btn-full{width:100%;}
+.btn-forest{background:var(--forest);border-color:var(--forest);color:white;box-shadow:0 4px 16px rgba(26,71,49,0.3);}
+.btn-forest:hover{background:var(--forest2);}
+.btn-leaf{background:var(--leaf);border-color:var(--leaf);color:white;box-shadow:0 4px 16px rgba(76,175,125,0.28);}
+.btn-coral{background:var(--coral-lt);border-color:var(--coral);color:var(--coral);}
+.btn-coral:hover{background:var(--coral);color:white;}
+.btn-ghost{background:transparent;border-color:var(--rule2);color:var(--ink2);}
+.btn-ghost:hover{border-color:var(--forest);color:var(--forest);}
+.btn-gold{background:var(--gold-lt);border-color:var(--gold);color:var(--gold);}
+.btn-sm{padding:0.5rem 0.9rem;font-size:var(--t-sm);min-height:44px;}
+
+/* Take button — pill-shaped hero */
+.take-btn{
+  width:100%;margin-top:0.9rem;padding:1.1rem 1.5rem;
+  border-radius:100px;border:3px solid var(--forest);
+  background:linear-gradient(135deg, var(--forest3), var(--forest));
+  color:white;font-family:'Lato',sans-serif;
+  font-size:var(--t-lg);font-weight:900;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:0.5rem;
+  animation:takeGlow 3s ease-in-out infinite;transition:transform 0.15s;
+  box-shadow:0 6px 24px rgba(26,71,49,0.3);
+  -webkit-tap-highlight-color:transparent;
+}
+.take-btn:active{transform:scale(0.95);animation:none;}
+@keyframes takeGlow{
+  0%,100%{box-shadow:0 6px 24px rgba(26,71,49,0.3);}
+  50%{box-shadow:0 6px 40px rgba(26,71,49,0.55),0 0 0 6px rgba(26,71,49,0.1);}
+}
+.take-btn.overdue{
+  background:linear-gradient(135deg,#e8402a,#b83d2c);
+  border-color:#e8402a;
+  animation:takeRed 0.9s ease-in-out infinite;
+  letter-spacing:0.3px;
+}
+@keyframes takeRed{
+  0%,100%{box-shadow:0 6px 24px rgba(217,95,75,0.4),0 0 0 0px rgba(217,95,75,0);}
+  50%{box-shadow:0 8px 48px rgba(217,95,75,0.75),0 0 0 8px rgba(217,95,75,0.18);}
+}
+
+/* ── Overdue medicine card — full red border + shake ── */
+.med-item.overdue-item{
+  border-color:var(--coral)!important;
+  border-width:2.5px!important;
+  background:linear-gradient(180deg,#fff4f2 0%,#fff 60%)!important;
+  animation:cardShake 4s ease-in-out infinite;
+}
+@keyframes cardShake{
+  0%,90%,100%{transform:translateX(0);}
+  92%{transform:translateX(-4px);}
+  94%{transform:translateX(4px);}
+  96%{transform:translateX(-3px);}
+  98%{transform:translateX(3px);}
+}
+
+/* Overdue banner inside card */
+.overdue-banner{
+  display:flex;align-items:center;gap:0.5rem;
+  background:var(--coral);color:white;
+  border-radius:var(--r-md) var(--r-md) 0 0;
+  padding:0.55rem 0.9rem;
+  margin:-1.2rem -1.2rem 1rem -1.2rem;
+  font-size:var(--t-sm);font-weight:900;
+  animation:bannerPulse 1.2s ease-in-out infinite;
+}
+@keyframes bannerPulse{
+  0%,100%{background:var(--coral);}
+  50%{background:#c0392b;}
+}
+.overdue-banner .ob-icon{font-size:1rem;font-weight:900;margin-right:2px;animation:iconWiggle 1s ease-in-out infinite;}
+@keyframes iconWiggle{
+  0%,100%{transform:rotate(0deg);}
+  25%{transform:rotate(-15deg);}
+  75%{transform:rotate(15deg);}
+}
+
+/* Overdue ss-cd badge — stronger */
+.ss-cd.ct-overdue{
+  background:var(--coral);color:white!important;
+  font-weight:900;
+  animation:overdueFlash 0.8s step-end infinite;
+}
+@keyframes overdueFlash{0%,100%{opacity:1;}50%{opacity:0.35;}}
+
+/* Overdue schedule-slot — pulsing border */
+.schedule-slot.s-overdue{
+  border-color:var(--coral);background:var(--coral-xlt);
+  animation:slotPulse 1.5s ease-in-out infinite;
+}
+@keyframes slotPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(217,95,75,0);}
+  50%{box-shadow:0 0 0 4px rgba(217,95,75,0.2);}
+}
+
+/* ═══ MEDICINE CARDS ═══ */
+.med-item{
+  background:var(--paper);border:1.5px solid var(--rule);
+  border-radius:var(--r-xl);padding:1.2rem;
+  margin-bottom:0.85rem;box-shadow:var(--sh);transition:border-color 0.2s;
+}
+.med-item.taken-item{border-color:var(--leaf-lt);background:var(--leaf-xlt);opacity:0.7;}
+.med-strip{width:6px;border-radius:6px;flex-shrink:0;align-self:stretch;min-height:40px;}
+.med-name{
+  font-size:var(--t-lg);font-weight:900;color:var(--ink);margin-bottom:0.35rem;
+}
+.med-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:0.6rem;}
+.med-note{font-size:var(--t-xs);color:var(--ink4);margin-top:0.3rem;font-style:italic;}
+.med-actions{display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;}
+
+/* ═══ WATER RING ═══ */
+.water-hero{text-align:center;padding:0.3rem 0 0.7rem;}
+.ring-wrap{position:relative;width:210px;height:210px;margin:0 auto 0.75rem;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-track{fill:none;stroke:var(--rule2);stroke-width:18;}
+.ring-fill{fill:none;stroke:url(#wg);stroke-width:18;stroke-linecap:round;transition:stroke-dashoffset 0.8s ease;}
+.ring-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.ring-ml{font-size:2.6rem;font-weight:900;color:var(--forest);line-height:1;}
+.ring-lbl{font-size:var(--t-sm);font-weight:700;color:var(--ink3);margin-top:4px;}
+.ring-pct{font-size:var(--t-xs);color:var(--ink4);margin-top:2px;}
+
+/* ═══ GLASS BUTTONS ═══ */
+.glass-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.65rem;margin:0.7rem 0;}
+.glass-btn{
+  background:var(--leaf-xlt);border:1.5px solid var(--rule);
+  border-radius:var(--r-lg);padding:1rem 0.65rem;
+  cursor:pointer;text-align:center;transition:all 0.18s;
+  font-family:'Lato',sans-serif;min-height:88px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  -webkit-tap-highlight-color:transparent;
+}
+.glass-btn:active{border-color:var(--forest);background:var(--leaf-lt);transform:scale(0.96);}
+.glass-icon{font-size:1.9rem;line-height:1;}
+.glass-name{font-size:var(--t-sm);font-weight:900;color:var(--ink2);}
+.glass-ml{font-size:var(--t-md);font-weight:900;color:var(--forest);}
+
+/* ═══ STATS ═══ */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0.65rem;margin-bottom:0.9rem;}
+.stat-card{
+  background:var(--paper);border:1.5px solid var(--rule);
+  border-radius:var(--r-lg);padding:0.9rem 0.5rem;
+  text-align:center;box-shadow:var(--sh);
+}
+.stat-val{font-size:var(--t-2xl);font-weight:900;line-height:1;margin-bottom:4px;}
+.stat-lbl{font-size:0.72rem;font-weight:700;color:var(--ink3);line-height:1.3;text-transform:uppercase;letter-spacing:0.3px;}
+.sv-forest{color:var(--forest);}
+.sv-leaf{color:var(--leaf);}
+.sv-gold{color:var(--gold);}
+.sv-coral{color:var(--coral);}
+
+/* ═══ PROGRESS ═══ */
+.prog-wrap{background:var(--rule);border-radius:8px;height:14px;overflow:hidden;margin:0.6rem 0;}
+.prog-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--forest3),var(--leaf));transition:width 0.7s ease;}
+
+/* ═══ FORM ═══ */
+.form-group{margin-bottom:1rem;}
+label{display:block;font-size:var(--t-sm);font-weight:700;color:var(--ink2);margin-bottom:0.45rem;}
+input,select,textarea{
+  width:100%;background:var(--paper);border:2px solid var(--rule2);
+  border-radius:var(--r-md);padding:0.85rem 1rem;
+  color:var(--ink);font-size:var(--t-lg);
+  font-family:'Lato',sans-serif;font-weight:700;
+  transition:border-color 0.2s;outline:none;min-height:58px;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--forest);box-shadow:0 0 0 4px rgba(26,71,49,0.1);
+}
+input::placeholder{color:var(--ink4);font-weight:400;}
+select option{background:white;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;}
+
+/* ═══ TIME CHIPS ═══ */
+.time-chip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.65rem;margin:0.65rem 0;}
+.time-chip{
+  background:var(--cream);border:2px solid var(--rule2);
+  border-radius:var(--r-md);padding:0.85rem 0.6rem;
+  text-align:center;cursor:pointer;transition:all 0.18s;
+  min-height:70px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;
+}
+.time-chip.sel{border-color:var(--forest);background:var(--leaf-xlt);}
+.tc-time{font-size:var(--t-md);font-weight:900;color:var(--ink);display:block;}
+.tc-lbl{font-size:var(--t-xs);font-weight:700;color:var(--ink4);}
+.time-chip.sel .tc-time{color:var(--forest);}
+.time-chip.sel .tc-lbl{color:var(--forest2);}
+.time-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--leaf-xlt);border:1.5px solid var(--leaf-lt);
+  border-radius:20px;padding:5px 12px;
+  font-size:var(--t-xs);font-weight:800;color:var(--forest);
+  margin:4px 4px 0 0;
+}
+.time-tag button{background:none;border:none;color:var(--ink4);cursor:pointer;font-size:1rem;line-height:1;padding:0;}
+
+/* ═══ TOGGLE ═══ */
+.toggle{position:relative;width:60px;height:32px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{
+  position:absolute;cursor:pointer;inset:0;
+  background:var(--ink4);border-radius:32px;transition:all 0.3s;
+}
+.toggle-slider::after{
+  content:'';position:absolute;width:24px;height:24px;
+  left:4px;top:4px;background:white;border-radius:50%;
+  transition:all 0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+.toggle input:checked+.toggle-slider{background:var(--forest);}
+.toggle input:checked+.toggle-slider::after{transform:translateX(28px);}
+
+/* ═══ SETTING ROW ═══ */
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;padding:1rem 0;border-bottom:1.5px solid var(--rule);
+}
+.setting-row:last-child{border-bottom:none;}
+.setting-info{flex:1;}
+.s-label{font-size:var(--t-md);font-weight:900;color:var(--ink);}
+.s-desc{font-size:var(--t-xs);color:var(--ink3);margin-top:3px;line-height:1.45;}
+
+/* ═══ KIND TOGGLE ═══ */
+.kind-toggle{display:flex;gap:0.65rem;margin-bottom:1rem;}
+.kind-btn{
+  flex:1;padding:0.9rem;border-radius:var(--r-md);
+  border:2px solid var(--rule2);background:var(--cream);
+  color:var(--ink2);font-family:'Lato',sans-serif;
+  font-size:var(--t-sm);font-weight:900;cursor:pointer;
+  text-align:center;transition:all 0.18s;min-height:80px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+}
+.kind-btn .ki{font-size:1.9rem;}
+.kind-btn.active{border-color:var(--forest);background:var(--leaf-xlt);color:var(--forest);}
+
+/* ═══ COLOUR PICKER ═══ */
+.colour-row{display:flex;gap:9px;flex-wrap:wrap;margin:0.45rem 0;}
+.colour-dot{width:40px;height:40px;border-radius:50%;cursor:pointer;border:4px solid transparent;transition:all 0.2s;}
+.colour-dot.selected{border-color:var(--ink);transform:scale(1.18);}
+
+/* ═══ MEMBER AVATAR PICKER ═══ */
+.avatar-colours{display:flex;gap:8px;flex-wrap:wrap;margin:0.45rem 0;}
+.av-colour{width:44px;height:44px;border-radius:50%;cursor:pointer;border:4px solid transparent;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;font-weight:900;transition:all 0.2s;}
+.av-colour.selected{border-color:var(--ink);transform:scale(1.18);}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(5px);z-index:300;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity 0.25s;
+}
+.modal-overlay.open{opacity:1;visibility:visible;}
+.modal{
+  background:var(--paper);border-radius:28px 28px 0 0;
+  padding:1.3rem 1.3rem 1.8rem;width:100%;max-width:600px;
+  max-height:93vh;overflow-y:auto;
+  transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.34,1.2,0.64,1);
+  box-shadow:0 -12px 60px rgba(0,0,0,0.2);
+}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-handle{width:44px;height:5px;background:var(--rule2);border-radius:5px;margin:0 auto 1.1rem;}
+.modal-title{font-size:var(--t-xl);font-weight:900;color:var(--ink);margin-bottom:1.1rem;}
+.modal-step{display:none;}
+.modal-step.active{display:block;animation:fadeUp 0.22s ease;}
+.step-dots{display:flex;gap:7px;margin-bottom:1.2rem;}
+.step-dot{width:11px;height:11px;border-radius:50%;background:var(--rule2);transition:all 0.22s;}
+.step-dot.active{background:var(--forest);width:28px;border-radius:6px;}
+.step-dot.done{background:var(--leaf);}
+
+/* ═══ TOAST ═══ */
+.toast-wrap{
+  position:fixed;top:1rem;left:50%;transform:translateX(-50%);
+  z-index:500;display:flex;flex-direction:column;gap:7px;
+  pointer-events:none;width:calc(100% - 2rem);max-width:500px;
+}
+.toast{
+  background:var(--ink);color:white;border-radius:15px;
+  padding:0.9rem 1.1rem;font-size:var(--t-md);font-weight:700;
+  box-shadow:var(--sh-lg);display:flex;align-items:center;gap:9px;
+  animation:toastIn 0.3s cubic-bezier(0.34,1.2,0.64,1);
+}
+@keyframes toastIn{from{opacity:0;transform:translateY(-12px) scale(0.93);}}
+.toast.out{animation:toastOut 0.22s ease forwards;}
+@keyframes toastOut{to{opacity:0;transform:translateY(-8px);}}
+
+/* ═══ LOG ═══ */
+.log-item{
+  display:flex;align-items:center;gap:0.65rem;
+  padding:0.85rem 0;border-bottom:1.5px solid var(--rule);font-size:var(--t-sm);
+}
+.log-item:last-child{border-bottom:none;}
+.log-time{font-size:var(--t-xs);font-weight:700;color:var(--ink4);min-width:58px;}
+.log-text{flex:1;font-weight:700;color:var(--ink2);}
+.log-amount{font-weight:900;font-size:var(--t-sm);}
+
+/* ═══ EMPTY ═══ */
+.empty{text-align:center;padding:2.5rem 1rem;}
+.empty-icon{font-size:3.5rem;margin-bottom:0.7rem;}
+.empty-text{font-size:var(--t-md);color:var(--ink2);line-height:1.9;}
+.empty-text b{color:var(--forest);}
+.no-data{text-align:center;padding:1.4rem;color:var(--ink4);font-size:var(--t-sm);font-weight:700;}
+
+/* ═══ SECTION LABEL ═══ */
+.sec-lbl{
+  font-size:var(--t-xs);font-weight:900;color:var(--ink4);
+  text-transform:uppercase;letter-spacing:1.5px;margin:0.9rem 0 0.55rem;
+}
+
+/* ═══ CONFIG LAYERS ═══ */
+.totp-code-box {
+  background: var(--leaf-xlt);
+  border: 2px dashed var(--leaf);
+  border-radius: var(--r-md);
+  padding: 1rem;
+  font-size: 2rem;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 4px;
+  color: var(--forest);
+  margin: 0.75rem 0;
+  font-variant-numeric: tabular-nums;
+}
+.totp-progress-bar {
+  background: var(--rule);
+  height: 6px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.totp-progress-fill {
+  background: var(--gold);
+  height: 100%;
+  width: 100%;
+  transition: width 1s linear;
+}
+
+/* ═══ INSTALL BANNER ═══ */
+#installBanner{
+  position:fixed;bottom:5rem;left:1rem;right:1rem;z-index:250;
+  background:linear-gradient(135deg,var(--ink),var(--ink2));
+  border-radius:var(--r-xl);padding:1rem 1.1rem;
+  display:flex;align-items:center;gap:0.9rem;box-shadow:var(--sh-lg);
+  animation:toastIn 0.3s ease;
+}
+#installBanner .ib-t{flex:1;}
+#installBanner .ib-title{font-size:var(--t-sm);font-weight:900;color:white;}
+#installBanner .ib-sub{font-size:var(--t-xs);color:#9ca3af;margin-top:1px;}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:var(--rule2);border-radius:5px;}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
+
+/* ═══ LOGIN SCREEN ═══ */
+#loginScreen{
+  position:fixed;inset:0;z-index:1000;
+  background:linear-gradient(160deg, var(--forest) 0%, #112e20 100%);
+  display:flex;flex-direction:column;align-items:center;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+#loginScreen.hidden{display:none;}
+
+/* Top banner */
+.login-banner{
+  width:100%;padding:2.2rem 1.5rem 1.4rem;
+  display:flex;flex-direction:column;align-items:center;
+  flex-shrink:0;
+}
+.login-brand{
+  display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;
+}
+.login-brand-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;border:1.5px solid rgba(255,255,255,0.2);
+}
+.login-brand-name{
+  font-family:'Playfair Display',serif;font-size:var(--t-2xl);
+  font-weight:700;color:white;letter-spacing:-0.5px;
+}
+.login-brand-tagline{
+  font-size:var(--t-xs);color:rgba(255,255,255,0.6);
+  font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  text-align:center;
+}
+
+/* Progress steps */
+.login-steps{
+  display:flex;align-items:center;gap:0;
+  margin:1.2rem 0 0;
+}
+.ls-step{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.ls-dot{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;font-weight:900;
+  border:2.5px solid rgba(255,255,255,0.3);
+  color:rgba(255,255,255,0.5);
+  transition:all 0.3s;
+}
+.ls-dot.active{background:var(--leaf);border-color:var(--leaf);color:white;box-shadow:0 0 0 4px rgba(76,175,125,0.25);}
+.ls-dot.done{background:rgba(255,255,255,0.9);border-color:white;color:var(--forest);}
+.ls-label{font-size:0.62rem;font-weight:800;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;}
+.ls-dot.active ~ .ls-label,.ls-step:has(.ls-dot.active) .ls-label{color:rgba(255,255,255,0.9);}
+.ls-line{width:32px;height:2.5px;background:rgba(255,255,255,0.15);margin-bottom:18px;transition:background 0.3s;}
+.ls-line.done{background:var(--leaf);}
+
+/* Card */
+.login-card{
+  background:white;border-radius:28px 28px 0 0;
+  padding:1.8rem 1.5rem 2.5rem;
+  width:100%;max-width:480px;
+  flex:1;margin-top:0.2rem;
+  box-shadow:0 -12px 60px rgba(0,0,0,0.3);
+}
+.lc-step{display:none;}
+.lc-step.active{display:block;animation:fadeUp 0.28s ease;}
+
+.lc-heading{
+  font-family:'Playfair Display',serif;
+  font-size:var(--t-xl);font-weight:700;color:var(--ink);
+  margin-bottom:0.25rem;
+}
+.lc-sub{
+  font-size:var(--t-sm);color:var(--ink3);margin-bottom:1.5rem;line-height:1.5;
+}
+
+/* Field groups */
+.lf-group{margin-bottom:1rem;}
+.lf-label{
+  display:block;font-size:var(--t-sm);font-weight:900;
+  color:var(--ink2);margin-bottom:0.4rem;
+}
+.lf-label span{font-weight:400;color:var(--ink4);}
+.lf-input{
+  width:100%;background:var(--cream);border:2px solid var(--rule2);
+  border-radius:var(--r-md);padding:0.85rem 1rem;
+  color:var(--ink);font-size:var(--t-lg);
+  font-family:'Lato',sans-serif;font-weight:700;
+  transition:border-color 0.2s;outline:none;min-height:58px;
+}
+.lf-input:focus{border-color:var(--forest);background:white;box-shadow:0 0 0 3px rgba(26,71,49,0.08);}
+.lf-input.error{border-color:var(--coral);background:var(--coral-xlt);}
+.lf-row{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;}
+
+/* Gender chips */
+.gender-chips{display:flex;gap:0.5rem;flex-wrap:wrap;}
+.gc{
+  flex:1;min-width:80px;padding:0.8rem 0.5rem;
+  border:2.5px solid var(--rule2);border-radius:var(--r-md);
+  background:var(--cream);cursor:pointer;text-align:center;
+  font-size:var(--t-sm);font-weight:900;color:var(--ink3);
+  transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.gc-icon{font-size:1.5rem;}
+.gc.sel{border-color:var(--forest);background:var(--leaf-xlt);color:var(--forest);}
+
+/* Blood group chips */
+.bg-chips{display:flex;gap:0.5rem;flex-wrap:wrap;}
+.bgc{
+  padding:0.6rem 1rem;border:2px solid var(--rule2);
+  border-radius:30px;background:var(--cream);cursor:pointer;
+  font-size:var(--t-sm);font-weight:900;color:var(--ink3);
+  transition:all 0.18s;min-height:44px;display:flex;align-items:center;
+}
+.bgc.sel{border-color:var(--coral);background:var(--coral-lt);color:var(--coral);}
+
+/* Condition chips */
+.cond-chips{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.75rem;}
+.condc{
+  padding:0.55rem 0.9rem;border:2px solid var(--rule2);
+  border-radius:20px;background:var(--cream);cursor:pointer;
+  font-size:var(--t-xs);font-weight:800;color:var(--ink3);
+  transition:all 0.18s;min-height:40px;display:flex;align-items:center;
+}
+.condc.sel{border-color:var(--sky);background:var(--sky-lt);color:var(--sky);}
+
+/* Summary card */
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin-bottom:1rem;}
+.sg-item{
+  background:var(--cream);border:1.5px solid var(--rule);
+  border-radius:var(--r-md);padding:0.75rem;
+}
+.sg-label{font-size:0.68rem;font-weight:900;color:var(--ink4);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;}
+.sg-val{font-size:var(--t-sm);font-weight:900;color:var(--ink);}
+.sg-item.full{grid-column:1/-1;}
+.sg-item.accent{background:var(--leaf-xlt);border-color:var(--leaf-lt);}
+
+/* Nav buttons */
+.login-nav{display:flex;gap:0.65rem;margin-top:1.4rem;}
+.ln-back{
+  padding:0.95rem 1.3rem;border-radius:var(--r-lg);
+  border:2px solid var(--rule2);background:white;
+  color:var(--ink3);font-size:var(--t-md);font-weight:900;
+  cursor:pointer;font-family:'Lato',sans-serif;min-height:60px;
+}
+.ln-next{
+  flex:1;padding:0.95rem;border-radius:var(--r-lg);
+  border:none;
+  background:linear-gradient(135deg, var(--forest3), var(--forest));
+  color:white;font-size:var(--t-md);font-weight:900;
+  cursor:pointer;font-family:'Lato',sans-serif;
+  box-shadow:0 4px 18px rgba(26,71,49,0.35);min-height:60px;
+}
+.ln-next:active{transform:scale(0.97);}
+.ln-next.gold{background:linear-gradient(135deg,var(--gold),#a8823a);box-shadow:0 4px 18px rgba(201,168,76,0.4);}
+
+/* ═══ PING / NUDGE STYLES ═══ */
+.ping-bar{
+  display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;
+}
+.ping-btn{
+  flex:1;min-width:120px;
+  padding:0.65rem 0.8rem;border-radius:var(--r-md);
+  border:2px solid var(--rule2);background:white;
+  font-family:"Lato",sans-serif;font-size:var(--t-sm);font-weight:900;
+  cursor:pointer;color:var(--ink2);
+  transition:all 0.18s;min-height:48px;
+}
+.ping-btn.med{border-color:var(--coral);color:var(--coral);background:var(--coral-xlt);}
+.ping-btn.med:active{background:var(--coral);color:white;}
+.ping-btn.water{border-color:var(--sky);color:var(--sky);background:var(--sky-lt);}
+.ping-btn.water:active{background:var(--sky);color:white;}
+
+
+/* ═══ SIMPLE SHARE STYLES ═══ */
+.share-step{
+  background:var(--leaf-xlt);border:2px dashed var(--leaf);
+  border-radius:var(--r-lg);padding:1.2rem;margin-bottom:1rem;
+  text-align:center;
+}
+.share-code-big{
+  font-size:2.2rem;font-weight:900;color:var(--forest);
+  letter-spacing:6px;margin:0.5rem 0;font-variant-numeric:tabular-nums;
+}
+.share-hint{font-size:var(--t-xs);color:var(--ink3);line-height:1.6;}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN / PROFILE SETUP SCREEN ═══ -->
+<div id="loginScreen">
+
+  <!-- Top banner -->
+  <div class="login-banner">
+    <div class="login-brand">
+      <div class="login-brand-icon">💊</div>
+      <div class="login-brand-name">DailyCare</div>
+    </div>
+    <div class="login-brand-tagline">Family Medicine &amp; Hydration Tracker</div>
+
+    <!-- Step progress dots -->
+    <div class="login-steps" id="loginStepDots">
+      <div class="ls-step">
+        <div class="ls-dot active" id="lsd1">1</div>
+        <div class="ls-label">Identity</div>
+      </div>
+      <div class="ls-line" id="lsl1"></div>
+      <div class="ls-step">
+        <div class="ls-dot" id="lsd2">2</div>
+        <div class="ls-label">Health</div>
+      </div>
+      <div class="ls-line" id="lsl2"></div>
+      <div class="ls-step">
+        <div class="ls-dot" id="lsd3">3</div>
+        <div class="ls-label">Emergency</div>
+      </div>
+      <div class="ls-line" id="lsl3"></div>
+      <div class="ls-step">
+        <div class="ls-dot" id="lsd4">4</div>
+        <div class="ls-label">Confirm</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- White card — multi-step form -->
+  <div class="login-card">
+
+    <!-- ── STEP 1: Personal Identity ── -->
+    <div class="lc-step active" id="lstep1">
+      <div class="lc-heading">👤 Personal Details</div>
+      <div class="lc-sub">This helps us personalise your profile and medicine reminders.</div>
+
+      <div class="lf-row">
+        <div class="lf-group">
+          <label class="lf-label" for="lf_fname">First Name <span>*</span></label>
+          <input class="lf-input" id="lf_fname" type="text" placeholder="Ramesh" autocomplete="given-name" autocorrect="off">
+        </div>
+        <div class="lf-group">
+          <label class="lf-label" for="lf_lname">Last Name</label>
+          <input class="lf-input" id="lf_lname" type="text" placeholder="Patel" autocomplete="family-name" autocorrect="off">
+        </div>
+      </div>
+
+      <div class="lf-row">
+        <div class="lf-group">
+          <label class="lf-label" for="lf_age">Age <span>*</span></label>
+          <input class="lf-input" id="lf_age" type="number" placeholder="65" min="1" max="120" inputmode="numeric">
+        </div>
+        <div class="lf-group">
+          <label class="lf-label" for="lf_phone">Phone Number</label>
+          <input class="lf-input" id="lf_phone" type="tel" placeholder="+91 98765…" autocomplete="tel" inputmode="tel">
+        </div>
+      </div>
+
+      <div class="lf-group">
+        <label class="lf-label">Gender</label>
+        <div class="gender-chips">
+          <div class="gc" onclick="selGender(this,'Male')"><div class="gc-icon">👨</div>Male</div>
+          <div class="gc" onclick="selGender(this,'Female')"><div class="gc-icon">👩</div>Female</div>
+          <div class="gc" onclick="selGender(this,'Other')"><div class="gc-icon">🧑</div>Other</div>
+          <div class="gc" onclick="selGender(this,'Prefer not to say')"><div class="gc-icon">—</div>Skip</div>
+        </div>
+      </div>
+
+      <div class="login-nav">
+        <button class="ln-next" onclick="loginNext(1)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: Health Info ── -->
+    <div class="lc-step" id="lstep2">
+      <div class="lc-heading">❤️ Health Information</div>
+      <div class="lc-sub">Stored only on this device. Helps doctors and family in an emergency.</div>
+
+      <div class="lf-group">
+        <label class="lf-label">Blood Group</label>
+        <div class="bg-chips">
+          <div class="bgc" onclick="selBG(this,'A+')">A+</div>
+          <div class="bgc" onclick="selBG(this,'A−')">A−</div>
+          <div class="bgc" onclick="selBG(this,'B+')">B+</div>
+          <div class="bgc" onclick="selBG(this,'B−')">B−</div>
+          <div class="bgc" onclick="selBG(this,'AB+')">AB+</div>
+          <div class="bgc" onclick="selBG(this,'AB−')">AB−</div>
+          <div class="bgc" onclick="selBG(this,'O+')">O+</div>
+          <div class="bgc" onclick="selBG(this,'O−')">O−</div>
+          <div class="bgc" onclick="selBG(this,'Unknown')">Don't know</div>
+        </div>
+      </div>
+
+      <div class="lf-group">
+        <label class="lf-label">Weight <span>(optional)</span></label>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <input class="lf-input" id="lf_weight" type="number" placeholder="70" inputmode="numeric" style="flex:1;">
+          <select class="lf-input" id="lf_weight_unit" style="width:90px;min-height:58px;">
+            <option value="kg">kg</option>
+            <option value="lbs">lbs</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="lf-group">
+        <label class="lf-label">Known Conditions <span>(tap all that apply)</span></label>
+        <div class="cond-chips" id="condChips">
+          <div class="condc" onclick="togCond(this,'Diabetes')">🩸 Diabetes</div>
+          <div class="condc" onclick="togCond(this,'Hypertension')">💓 Hypertension</div>
+          <div class="condc" onclick="togCond(this,'Heart Disease')">❤️ Heart Disease</div>
+          <div class="condc" onclick="togCond(this,'Asthma')">🌬️ Asthma</div>
+          <div class="condc" onclick="togCond(this,'Thyroid')">🦋 Thyroid</div>
+          <div class="condc" onclick="togCond(this,'Kidney Disease')">🫘 Kidney Disease</div>
+          <div class="condc" onclick="togCond(this,'Arthritis')">🦴 Arthritis</div>
+          <div class="condc" onclick="togCond(this,'Cholesterol')">🧪 Cholesterol</div>
+        </div>
+        <input class="lf-input" id="lf_cond_other" type="text" placeholder="Other condition (optional)" style="margin-top:0.3rem;" autocorrect="off">
+      </div>
+
+      <div class="lf-group">
+        <label class="lf-label">Known Allergies <span>(optional)</span></label>
+        <input class="lf-input" id="lf_allergies" type="text" placeholder="e.g. Penicillin, Sulfa drugs" autocorrect="off">
+      </div>
+
+      <div class="login-nav">
+        <button class="ln-back" onclick="loginBack(2)">← Back</button>
+        <button class="ln-next" onclick="loginNext(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Emergency Contact ── -->
+    <div class="lc-step" id="lstep3">
+      <div class="lc-heading">🆘 Emergency Contact</div>
+      <div class="lc-sub">Who should be called if something happens? This stays on your device only.</div>
+
+      <div class="lf-group">
+        <label class="lf-label" for="lf_ec_name">Contact Name</label>
+        <input class="lf-input" id="lf_ec_name" type="text" placeholder="e.g. Priya (Daughter)" autocomplete="name" autocorrect="off">
+      </div>
+
+      <div class="lf-group">
+        <label class="lf-label" for="lf_ec_phone">Contact Phone</label>
+        <input class="lf-input" id="lf_ec_phone" type="tel" placeholder="+91 98765…" autocomplete="tel" inputmode="tel">
+      </div>
+
+      <div class="lf-group">
+        <label class="lf-label" for="lf_ec_rel">Relationship</label>
+        <select class="lf-input" id="lf_ec_rel">
+          <option value="">Select…</option>
+          <option>Son</option>
+          <option>Daughter</option>
+          <option>Spouse / Partner</option>
+          <option>Sibling</option>
+          <option>Parent</option>
+          <option>Doctor</option>
+          <option>Caregiver</option>
+          <option>Friend</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="lf-group">
+        <label class="lf-label" for="lf_doctor">Doctor's Name <span>(optional)</span></label>
+        <input class="lf-input" id="lf_doctor" type="text" placeholder="e.g. Dr. Mehta" autocorrect="off">
+      </div>
+
+      <div class="lf-group">
+        <label class="lf-label" for="lf_doctor_phone">Doctor's Phone <span>(optional)</span></label>
+        <input class="lf-input" id="lf_doctor_phone" type="tel" placeholder="+91 98765…" inputmode="tel">
+      </div>
+
+      <div class="login-nav">
+        <button class="ln-back" onclick="loginBack(3)">← Back</button>
+        <button class="ln-next" onclick="loginNext(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: Review & Confirm ── -->
+    <div class="lc-step" id="lstep4">
+      <div class="lc-heading">✅ Review Your Profile</div>
+      <div class="lc-sub">Everything looks right? You can always update this in Settings later.</div>
+
+      <div class="summary-grid" id="loginSummary"></div>
+
+      <div style="background:var(--leaf-xlt);border:1.5px solid var(--leaf-lt);border-radius:var(--r-md);padding:0.85rem;font-size:var(--t-xs);color:var(--ink2);line-height:1.7;margin-bottom:0.5rem;">
+        🔒 <b>All data stays on this device only.</b> Nothing is sent to any server without your permission. You can delete everything from Settings at any time.
+      </div>
+
+      <div class="login-nav">
+        <button class="ln-back" onclick="loginBack(4)">← Back</button>
+        <button class="ln-next gold" onclick="doLogin()">🚀 Start Using DailyCare</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modalTitle"></div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-top">
+    <div class="logo-wrap">
+      <div class="logo-icon" style="font-size:1rem;font-weight:900;letter-spacing:-1px;">DC</div>
+      <div>
+        <div class="logo-text">DailyCare</div>
+        <div class="logo-sub">Family Medicine Tracker</div>
+      </div>
+    </div>
+    <div class="clock-wrap">
+      <div>
+        <span class="clock-main" id="clockTime">12:00</span>
+        <span class="clock-ampm" id="clockAmpm">PM</span>
+      </div>
+      <div class="clock-date" id="clockDate">—</div>
+    </div>
+  </div>
+  <div class="member-tabs-wrap" id="memberTabs"></div>
+</header>
+
+<nav>
+  <button class="nav-btn active" onclick="switchTab('home',this)">
+    <span class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </span><span>Home</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('meds',this)">
+    <span class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+    </span><span>Medicines</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('water',this)">
+    <span class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6 9 4 13 4 16a8 8 0 0 0 16 0c0-3-2-7-8-14z"/></svg>
+    </span><span>Water</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('log',this)">
+    <span class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    </span><span>History</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('settings',this)">
+    <span class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </span><span>Settings</span>
+  </button>
+</nav>
+
+<main>
+
+<div class="tab-panel active" id="tab-home">
+  <div id="careCard"></div>
+  <div class="card">
+    <div class="card-title">Today's Schedule</div>
+    <div id="scheduleList"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Quick Water</div>
+    <div class="glass-grid" id="homeGlass"></div>
+    <div style="display:flex;gap:0.65rem;margin-top:0.75rem;">
+      <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="undoWater()">Undo Last</button>
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-meds">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val sv-forest" id="stTotal">0</div><div class="stat-lbl">Total</div></div>
+    <div class="stat-card"><div class="stat-val sv-leaf" id="stTaken">0</div><div class="stat-lbl">Taken</div></div>
+    <div class="stat-card"><div class="stat-val sv-gold" id="stPending">0</div><div class="stat-lbl">Remaining</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Progress Today</div>
+    <div class="prog-wrap"><div class="prog-bar" id="medProg" style="width:0%"></div></div>
+    <div style="text-align:right;font-size:var(--t-sm);color:var(--ink3);font-weight:700;margin-top:4px;" id="medProgTxt">0 of 0</div>
+  </div>
+  <button class="btn btn-forest btn-full" style="margin-bottom:0.9rem;" onclick="openAddMed()">+ Add a Medicine</button>
+  <div id="medList"></div>
+</div>
+
+<div class="tab-panel" id="tab-water">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val sv-forest" id="stWml">0</div><div class="stat-lbl">ML Today</div></div>
+    <div class="stat-card"><div class="stat-val sv-leaf" id="stWpct">0%</div><div class="stat-lbl">Goal %</div></div>
+    <div class="stat-card"><div class="stat-val sv-gold" id="stWleft">—</div><div class="stat-lbl">Still Needed</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Hydration Today</div>
+    <div class="water-hero">
+      <div class="ring-wrap">
+        <svg width="210" height="210" viewBox="0 0 210 210">
+          <defs>
+            <linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#2d7a55"/>
+              <stop offset="100%" stop-color="#4caf7d"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="105" cy="105" r="90"/>
+          <circle class="ring-fill" id="waterRing" cx="105" cy="105" r="90" stroke-dasharray="565" stroke-dashoffset="565"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-ml" id="wMl">0</div>
+          <div class="ring-lbl">ml drunk today</div>
+          <div class="ring-pct" id="wPct">0% of goal</div>
+        </div>
+      </div>
+      <div style="font-size:var(--t-sm);color:var(--ink2);font-weight:700;margin-bottom:0.65rem;">
+        Daily goal: <span style="color:var(--forest);font-weight:900;" id="wGoalDisp">2000</span> ml
+      </div>
+    </div>
+    <div class="sec-lbl">Add Water</div>
+    <div class="glass-grid" id="glassGrid"></div>
+    <div style="display:flex;gap:0.65rem;margin-top:0.9rem;flex-wrap:wrap;">
+      <button class="btn btn-forest" style="flex:1;" onclick="openCustomWater()">Other Amount</button>
+      <button class="btn btn-ghost btn-sm" onclick="undoWater()">Undo</button>
+      <button class="btn btn-coral btn-sm" onclick="resetWater()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-log">
+  <div class="card">
+    <div class="card-title">Today's Activity</div>
+    <div id="logList"><div class="no-data">Nothing recorded yet today.</div></div>
+  </div>
+  <div style="text-align:center;">
+    <button class="btn btn-ghost btn-sm" onclick="clearLog()">Clear History</button>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-settings">
+
+  <div class="card">
+    <div class="card-title">Family Members</div>
+    <div id="memberSettingsList"></div>
+    <button class="btn btn-forest btn-full" style="margin-top:0.75rem;" onclick="openAddMember()">+ Add Family Member</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Share &amp; View Profiles</div>
+    <div style="font-size:var(--t-sm);color:var(--ink3);margin-bottom:0.9rem;line-height:1.65;">
+      Share your medicines and water with a family member or doctor — they can <b>view only</b>, not edit.
+    </div>
+    
+    <div id="otherPersonDashboard" style="margin-bottom: 1rem;"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+      <button class="btn btn-forest btn-sm" onclick="openSimpleShareModal()">📤 Share My Profile</button>
+      <button class="btn btn-gold btn-sm" onclick="openReceiveAccessModal()">👁 View Someone's Profile</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Reminders</div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-label">Medicine Alarms</div><div class="s-desc" id="notifDesc">Alarms are set automatically in your phone's Clock app when you save a medicine with a reminder time.</div></div>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-label">Reminders On / Off</div><div class="s-desc">Turn off to stop all reminder alerts</div></div>
+      <label class="toggle"><input type="checkbox" id="togReminders" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-label">Alert Before</div><div class="s-desc">Notify this many minutes before medicine time</div></div>
+      <select id="leadTime" style="width:130px;min-height:50px;font-size:var(--t-md);font-weight:800;">
+        <option value="0">On time</option>
+        <option value="5" selected>5 min</option>
+        <option value="10">10 min</option>
+        <option value="15">15 min</option>
+        <option value="30">30 min</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-label">Reset at Midnight</div><div class="s-desc">Clear water &amp; medicine status each new day</div></div>
+      <label class="toggle"><input type="checkbox" id="togAutoReset" checked><span class="toggle-slider"></span></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Water Goal</div>
+    <div class="form-group"><label>Daily Water Goal (ml)</label><input type="number" id="setGoal" placeholder="2000"></div>
+    <div class="sec-lbl">Quick Add Buttons (ml)</div>
+    <div class="form-row" style="margin-bottom:0.65rem;">
+      <div class="form-group" style="margin:0;"><label>Button 1</label><input type="number" id="p1" placeholder="150"></div>
+      <div class="form-group" style="margin:0;"><label>Button 2</label><input type="number" id="p2" placeholder="250"></div>
+    </div>
+    <div class="form-row" style="margin-bottom:0.65rem;">
+      <div class="form-group" style="margin:0;"><label>Button 3</label><input type="number" id="p3" placeholder="350"></div>
+      <div class="form-group" style="margin:0;"><label>Button 4</label><input type="number" id="p4" placeholder="500"></div>
+    </div>
+    <button class="btn btn-forest btn-full" onclick="saveSettings()">Save Settings</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Data</div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-label">Save a Backup</div><div class="s-desc">Download all data as a file</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="exportData()">Export</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-label">Delete Everything</div><div class="s-desc">Wipes all members, medicines and logs</div></div>
+      <button class="btn btn-coral btn-sm" onclick="hardReset()">Delete All</button>
+    </div>
+    <div style="margin-top:0.9rem;font-size:var(--t-xs);color:var(--ink4);line-height:1.8;">
+      DailyCare v5 · All data saved only on this device.
+    </div>
+  </div>
+
+</div>
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  CONSTANTS & REAL-TIME WEB PIPELINES
+// ══════════════════════════════════════════════════════
+const STORE_KEY = 'dc_v5';
+const DATE_KEY  = 'dc_date_v5';
+const PUBLIC_RELAY_BASE    = 'https://ntfy.sh/dc_live_sync_';
+// ↓ Update both after deploying backend to Railway
+const DAILYCARE_BACKEND_URL = 'https://your-backend.up.railway.app';
+const VAPID_PUBLIC_KEY      = 'BFfqTYxfvJRXEgv2yJ_rILUJ1mTHvo2L9LV3-iKGlIuNYU7s96zGr2p3KnEJZHvMMGpvdrsD5YaYU1M0vOO_Sfw';
+
+const MED_COLOURS = [
+  '#1a4731','#2d7a55','#3b82c4','#7c3aed',
+  '#b45309','#d95f4b','#be185d','#0d7490'
+];
+const AVATAR_COLOURS = [
+  '#1a4731','#3b82c4','#7c3aed','#d95f4b',
+  '#b45309','#0d7490','#be185d','#374151'
+];
+
+// ══════════════════════════════════════════════════════
+//  STATE  — multi-member
+// ══════════════════════════════════════════════════════
+let state = {
+  activeMemberId: null,
+  settings: { autoReset: true, reminders: true, leadTime: 5 },
+  members: [],
+  otherPersons: []
+};
+
+window.activeSyncIntervals = {};
+
+function todayStr(){ return new Date().toLocaleDateString('en-CA'); }
+function timeNow(){ return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}); }
+function fmt12(t){
+  if(!t) return '';
+  const [h,m] = t.split(':').map(Number);
+  return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;
+}
+
+// Unified dynamic tracking profile lookup across both local and verified remote matrices
+function activeMember() {
+  const allAvailable = [
+    ...state.members, 
+    // CRITICAL SECURITY VISIBILITY FILTER: Only map INBOUND follower streams into navigation views
+    ...(state.otherPersons || []).filter(p => p.verified && p.isIncomingData)
+  ];
+  return allAvailable.find(m => m.id === state.activeMemberId) || allAvailable[0] || null;
+}
+
+function normMed(m){
+  const times = m.reminderTimes?.length ? m.reminderTimes : (m.time ? [m.time] : []);
+  const taken = m.takenTimes || {};
+  const noted = m.notifiedTimes || {};
+  if(m.taken && times.length && !Object.keys(taken).length) taken[times[0]] = m.takenAt || true;
+  return { name:m.name, kind:m.kind||'tablet', qty:m.qty||1,
+    food:m.food||'', notes:m.notes||'', colour:m.colour||MED_COLOURS[0],
+    reminderTimes:times, takenTimes:taken, notifiedTimes:noted };
+}
+
+function newMemberId(){ return 'mb_'+Date.now()+'_'+Math.random().toString(36).slice(2,6); }
+
+function ensureDefaultMember(){
+  if(!state.members.length){
+    const id = newMemberId();
+    state.members.push({
+      id, name:'Myself', relation:'', avatarColour:AVATAR_COLOURS[0],
+      waterMl:0, waterGoal:2000, waterHistory:[], presets:[150,250,350,500],
+      medicines:[], log:[]
+    });
+    state.activeMemberId = id;
+  }
+  if(!state.activeMemberId){
+    state.activeMemberId = state.members[0].id;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  PERSISTENCE & PIPELINE BRIDGE
+// ══════════════════════════════════════════════════════
+function loadState(){
+  const raw = localStorage.getItem(STORE_KEY);
+  const savedDate = localStorage.getItem(DATE_KEY);
+  if(raw){
+    try{
+      const p = JSON.parse(raw);
+      if(p.medicines && !p.members){
+        const id = newMemberId();
+        p.members = [{
+          id, name:'Myself', relation:'', avatarColour:AVATAR_COLOURS[0],
+          waterMl:p.waterMl||0, waterGoal:p.waterGoal||2000,
+          waterHistory:p.waterHistory||[], presets:p.presets||[150,250,350,500],
+          medicines:(p.medicines||[]).map(normMed), log:p.log||[]
+        }];
+        p.activeMemberId = id;
+      }
+      p.members = (p.members||[]).map(mb=>({
+        ...mb,
+        medicines:(mb.medicines||[]).map(normMed)
+      }));
+      const newDay = savedDate !== todayStr();
+      if(newDay && p.settings?.autoReset!==false){
+        p.members = p.members.map(mb=>({
+          ...mb, waterMl:0, waterHistory:[], log:[],
+          medicines:mb.medicines.map(m=>({...m,takenTimes:{},notifiedTimes:{}}))
+        }));
+      }
+      state = {...state, ...p};
+      if(!state.otherPersons) state.otherPersons = [];
+    } catch(e){ console.warn('parse error',e); }
+  }
+  ensureDefaultMember();
+  localStorage.setItem(DATE_KEY, todayStr());
+  _rawSave();
+}
+
+function _rawSave(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+function saveState(){ _rawSave(); broadcastLocalProfiles(); }
+
+// Outbound Data Synchronization: Broadcast primary local states out to link network channels
+async function broadcastLocalProfiles() {
+  if (!state.otherPersons) return;
+  const outboundCues = state.otherPersons.filter(p => !p.isIncomingData && p.secret);
+  
+  for (const node of outboundCues) {
+    try {
+      const channelId = generateChannelId(node.secret);
+      const personalAccount = state.members[0]; // Point directly to YOUR local main account
+      
+      const syncPayload = {
+        updatedAt: Date.now(),
+        name: personalAccount.name,
+        avatarColour: personalAccount.avatarColour,
+        waterMl: personalAccount.waterMl,
+        waterGoal: personalAccount.waterGoal,
+        presets: personalAccount.presets,
+        medicines: personalAccount.medicines,
+        log: personalAccount.log
+      };
+      await fetch(PUBLIC_RELAY_BASE + channelId, { method: 'POST', body: JSON.stringify(syncPayload) });
+    } catch(e) { console.debug("Sync transmission frame dropped safely."); }
+  }
+}
+
+function generateChannelId(secret) {
+  let hash = 0;
+  for (let i = 0; i < secret.length; i++) { hash = (hash << 5) - hash + secret.charCodeAt(i); hash |= 0; }
+  return Math.abs(hash).toString(36);
+}
+
+// Inbound Data Synchronization: SSE streaming for instant updates, poll as fallback
+function initializePeerListener(idx) {
+  const profileNode = state.otherPersons[idx];
+  if (!profileNode || !profileNode.secret || !profileNode.verified || !profileNode.isIncomingData) return;
+  if (window.activeSyncIntervals[profileNode.id]) return; // already running
+
+  const channelId = generateChannelId(profileNode.secret);
+
+  function applyRemoteData(remoteData) {
+    if (!remoteData || !remoteData.updatedAt) return;
+    const trackTarget = state.otherPersons.find(p => p.id === profileNode.id);
+    if (!trackTarget) return;
+    if (trackTarget.lastSyncTime && remoteData.updatedAt <= trackTarget.lastSyncTime) return;
+
+    trackTarget.name = remoteData.name || trackTarget.name;
+    trackTarget.avatarColour = remoteData.avatarColour || trackTarget.avatarColour;
+    trackTarget.waterMl = remoteData.waterMl;
+    trackTarget.waterGoal = remoteData.waterGoal;
+    trackTarget.medicines = remoteData.medicines;
+    trackTarget.log = remoteData.log;
+    trackTarget.lastSyncTime = remoteData.updatedAt;
+
+    _rawSave();
+    if (activeMember()?.id === trackTarget.id) {
+      renderHome(); renderMeds(); renderWater(); renderLog();
+    }
+    renderMemberTabs();
+  }
+
+  // ── Layer 1: SSE stream (instant push, fires as soon as sharer saves) ──
+  let sseActive = false;
+  try {
+    const sse = new EventSource(`${PUBLIC_RELAY_BASE}${channelId}/sse`);
+    sse.onmessage = (e) => {
+      try {
+        const packet = JSON.parse(e.data);
+        if (packet.message) applyRemoteData(JSON.parse(packet.message));
+      } catch (_) {}
+    };
+    sse.onerror = () => { sse.close(); sseActive = false; };
+    sse.onopen = () => { sseActive = true; };
+    // Store SSE so we can close it on delete
+    window.activeSyncIntervals[profileNode.id] = { sse, interval: null };
+  } catch (_) {}
+
+  // ── Layer 2: Poll every 4s as fallback / initial load ──
+  const pollTick = async () => {
+    try {
+      const res = await fetch(`${PUBLIC_RELAY_BASE}${channelId}/json?poll=1`);
+      const text = await res.text();
+      if (!text.trim()) return;
+      for (const segment of text.split('\n')) {
+        if (!segment.trim()) continue;
+        const packet = JSON.parse(segment);
+        if (packet.message) applyRemoteData(JSON.parse(packet.message));
+      }
+    } catch (_) {}
+  };
+
+  pollTick(); // immediate first load
+  // WhatsApp handles all reminders — no in-app listener needed
+  // Subscribe this device to push so caregiver can send reminders
+  subscribeToPush(profileNode.secret);
+  const interval = setInterval(pollTick, 4000);
+
+  if (window.activeSyncIntervals[profileNode.id]?.sse) {
+    window.activeSyncIntervals[profileNode.id].interval = interval;
+  } else {
+    window.activeSyncIntervals[profileNode.id] = { sse: null, interval };
+  }
+}
+
+function startAllSyncDaemons() {
+  if (state.otherPersons) state.otherPersons.forEach((_, idx) => initializePeerListener(idx));
+}
+
+// ══════════════════════════════════════════════════════
+//  LIVE CLOCK
+// ══════════════════════════════════════════════════════
+let _lastMin = '';
+function tickClock(){
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+  const ampm = h>=12?'PM':'AM';
+  document.getElementById('clockTime').textContent =
+    `${h%12||12}:${String(m).padStart(2,'0')}`;
+  document.getElementById('clockAmpm').textContent = ampm;
+  document.getElementById('clockDate').textContent =
+    now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+
+  updateCountdowns(now);
+
+  const hhmm = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  if(s===0 || hhmm!==_lastMin){ checkReminders(hhmm); }
+}
+
+// ══════════════════════════════════════════════════════
+//  COUNTDOWN TIMERS (System Layout Overflow Repair)
+// ══════════════════════════════════════════════════════
+function updateCountdowns(now){
+  const nowMins = now.getHours()*60 + now.getMinutes() + now.getSeconds()/60;
+  document.querySelectorAll('[data-cd]').forEach(el=>{
+    if(el.dataset.taken==='1'){ el.textContent='✓ Taken'; el.className='ss-cd'; return; }
+    const [h,m] = el.dataset.cd.split(':').map(Number);
+    const diffMins = (h*60+m) - nowMins;
+    const diffSec  = Math.round(diffMins*60);
+    if(diffSec > 60){
+      const abs=Math.round(diffMins), hh=Math.floor(abs/60);
+      el.textContent = hh>0 ? `in ${hh}h` : `in ${abs}m`;
+      el.className='ss-cd';
+    } else if(diffSec > 0){
+      el.textContent = `in ${diffSec}s`;
+      el.className='ss-cd ct-due';
+    } else {
+      const absS=Math.abs(diffSec), absMins=Math.floor(absS/60);
+      // REPAIR BOUNDS OVERFLOW: Keep display text short when highly overdue so cluster stays un-fragmented
+      el.textContent = absMins>0 ? `${absMins}m ago` : `Now`;
+      el.className='ss-cd ct-overdue';
+    }
+  });
+
+  const ccEl = document.getElementById('ccCountdown');
+  if(ccEl && ccEl.dataset.cd){
+    if(ccEl.dataset.taken==='1'){ ccEl.textContent='✓ Taken'; ccEl.className='cc-countdown'; return; }
+    const [h,m] = ccEl.dataset.cd.split(':').map(Number);
+    const diffMins = (h*60+m) - nowMins;
+    const diffSec  = Math.round(diffMins*60);
+    if(diffSec>60){
+      const abs=Math.round(diffMins),hh=Math.floor(abs/60),mm=abs%60;
+      ccEl.textContent = hh>0?`in ${hh}h`:`in ${abs}m`;
+      ccEl.className='cc-countdown';
+    } else if(diffSec>0){
+      ccEl.textContent=`in ${diffSec}s`;ccEl.className='cc-countdown ct-due';
+    } else {
+      const absS=Math.abs(diffSec),absMins=Math.floor(absS/60);
+      ccEl.textContent=absMins>0?`${absMins}m ago`:'NOW';
+      ccEl.className='cc-countdown ct-overdue';
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════════════
+function render(){
+  renderMemberTabs();
+  renderHome();
+  renderMeds();
+  renderWater();
+  renderLog();
+}
+
+// ── MEMBER TABS ──
+function renderMemberTabs(){
+  const wrap = document.getElementById('memberTabs');
+  if(!wrap) return;
+
+  const currentActive = state.activeMemberId;
+
+  // Render local accounts
+  let tabsHtml = state.members.map(mb=>`
+    <button class="member-tab ${mb.id===currentActive?'active':''}" onclick="switchMember('${mb.id}')">
+      <div class="tab-avatar" style="background:${mb.avatarColour};">${mb.name[0].toUpperCase()}</div>
+      <span>${mb.name}</span>
+    </button>`).join('');
+
+  // Only show profiles you are VIEWING (incoming) — never show outgoing broadcast nodes as tabs.
+  // If you shared your profile to someone, that does NOT add their profile to your tabs.
+  if (state.otherPersons && state.otherPersons.length > 0) {
+    const viewingPeers = state.otherPersons.filter(p => p.verified && p.isIncomingData);
+    tabsHtml += viewingPeers.map(p => `
+      <button class="member-tab ${p.id === currentActive ? 'active' : ''}" onclick="switchMember('${p.id}')">
+        <div class="tab-avatar" style="background:${p.avatarColour}; border: 2px solid var(--gold);">${p.name[0].toUpperCase()}</div>
+        <span>${p.name} 👁</span>
+      </button>
+    `).join('');
+  }
+
+  tabsHtml += `<button class="add-member-btn" onclick="openAddMember()" title="Add family member">＋</button>`;
+  wrap.innerHTML = tabsHtml;
+}
+
+// ── HOME ──
+function renderHome(){
+  const mb = activeMember(); if(!mb) return;
+  // Care Card
+  const slots = [];
+  (mb.medicines||[]).forEach((m,i)=>{
+    (m.reminderTimes||[]).forEach(t=>{
+      if(!m.takenTimes?.[t]) slots.push({m,i,t});
+    });
+  });
+  slots.sort((a,b)=>a.t.localeCompare(b.t));
+  const now = new Date();
+  const nowMins = now.getHours()*60+now.getMinutes();
+  const next = slots[0];
+
+  let taken=0, pending=0;
+  (mb.medicines||[]).forEach(m=>{
+    const ts = m.reminderTimes?.length ? m.reminderTimes : ['_once'];
+    ts.forEach(t=>{ m.takenTimes?.[t]?taken++:pending++; });
+  });
+
+  const pct = Math.min(100,Math.round((mb.waterMl/(mb.waterGoal||2000))*100));
+
+  document.getElementById('careCard').innerHTML = `
+    <div class="care-card" style="${mb.isPeer ? 'background: linear-gradient(145deg, #1e3a8a 0%, #3b82f6 100%);' : ''}">
+      <div class="cc-top">
+        <div class="cc-avatar" style="background:${mb.avatarColour};">${mb.name[0].toUpperCase()}</div>
+        <div class="cc-info" style="min-width: 0; flex: 1;">
+          <div class="cc-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${mb.name}</div>
+          <div class="cc-relation" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${mb.relation || (mb.isPeer ? 'Direct Synchronized Peer' : 'Family Member')}</div>
+        </div>
+        ${mb.isPeer ? '' : `<button onclick="openEditMember('${mb.id}')" style="background:rgba(255,255,255,0.15);border:none;color:white;cursor:pointer;border-radius:8px;padding:6px 10px;font-size:var(--t-xs);font-weight:700;">Edit</button>`}
+      </div>
+      ${next ? `
+      <div class="cc-next" style="min-width: 0;">
+        <div style="min-width: 0; flex: 1;">
+          <div class="cc-next-label">Next Medicine</div>
+          <div class="cc-next-time">${fmt12(next.t)}</div>
+          <div class="cc-next-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${next.m.name}</div>
+        </div>
+        <div class="cc-countdown" id="ccCountdown" data-cd="${next.t}" data-taken="0">—</div>
+      </div>` : `
+      <div class="cc-next" style="justify-content:center;">
+        <div style="color:rgba(255,255,255,0.7);font-size:var(--t-sm);font-weight:700;text-align:center;">
+          ${taken>0?'All medicines taken for today!':'No scheduled medicines yet'}
+        </div>
+      </div>`}
+      <div class="cc-stats">
+        <div class="cc-stat"><div class="cc-stat-val">${taken}</div><div class="cc-stat-lbl">Taken</div></div>
+        <div class="cc-stat"><div class="cc-stat-val">${pending}</div><div class="cc-stat-lbl">Remaining</div></div>
+        <div class="cc-stat"><div class="cc-stat-val">${pct}%</div><div class="cc-stat-lbl">Hydration</div></div>
+      </div>
+    </div>`;
+
+  renderSchedule(mb, nowMins);
+  renderHomeGlass(mb);
+}
+
+function renderSchedule(mb, nowMins){
+  const el = document.getElementById('scheduleList');
+  const slots = [];
+  (mb.medicines||[]).forEach((m,i)=>{
+    (m.reminderTimes||[]).forEach(t=>slots.push({m,i,t,taken:!!m.takenTimes?.[t],takenAt:m.takenTimes?.[t]}));
+  });
+  slots.sort((a,b)=>a.t.localeCompare(b.t));
+  if(!slots.length){
+    el.innerHTML='<div class="no-data">No medicines scheduled.<br>Go to Medicines tab to add one.</div>';return;
+  }
+  el.innerHTML = slots.map(({m,i,t,taken,takenAt})=>{
+    const [h,min]=t.split(':').map(Number), diff=(h*60+min)-nowMins;
+    let cls='s-upcoming', badge='', timeClass='ss-time', checkClass='ss-check';
+    if(taken){
+      cls='s-taken';
+      badge=`<span class="ss-badge b-green">Taken ${typeof takenAt==='string'?takenAt:''}</span>`;
+    } else if(diff<-1){
+      cls='s-overdue';timeClass='ss-time ov';checkClass='ss-check ov';
+      badge=`<span class="ss-badge b-red">Now</span>`;
+    } else if(diff<=20){
+      cls='s-due';timeClass='ss-time du';
+      badge=`<span class="ss-badge b-amber">Soon</span>`;
+    }
+    return `
+    <div class="schedule-slot ${cls}">
+      <div class="ss-time-col">
+        <div class="${timeClass}">${fmt12(t).split(' ')[0]}</div>
+        <div class="ss-ampm">${fmt12(t).split(' ')[1]}</div>
+        <span class="ss-cd" data-cd="${t}" data-taken="${taken?'1':'0'}">—</span>
+      </div>
+      <div class="ss-info" style="min-width: 0;">
+        <div class="ss-name" style="color:${m.colour||'var(--forest)'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.name}</div>
+        <div class="ss-detail" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.kind=='liquid'?m.qty+' ml':m.qty+(m.qty==1?' tablet':' tablets')}${m.food?' · '+m.food:''}</div>
+        ${badge}
+      </div>
+      <div style="flex-shrink:0;">
+        ${mb.isPeer 
+          ? `<span class="ss-badge b-teal">Read-Only</span>`
+          : (!taken
+            ?`<button class="${checkClass}" onclick="takeMed(${i},'${t}')" title="Mark as taken">✓</button>`
+            :`<button class="btn btn-ghost btn-sm" style="font-size:var(--t-xs);min-height:40px;padding:0.4rem 0.7rem;" onclick="undoTakeMed(${i},'${t}')">Undo</button>`)
+        }
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderHomeGlass(mb){
+  const g = document.getElementById('homeGlass'); if(!g) return;
+  const labels=['Cup','Glass','Mug','Bottle'];
+  g.innerHTML=(mb.presets||[150,250,350,500]).map((ml,i)=>`
+    <button class="glass-btn" ${mb.isPeer?'disabled style="opacity:0.6"':''} onclick="addWater(${ml})">
+      <span class="glass-name">${labels[i]||'Drink'}</span>
+      <span class="glass-ml">${ml} ml</span>
+    </button>`).join('');
+}
+
+// ── MEDS TAB ──
+function renderMeds(){
+  const mb = activeMember(); if(!mb) return;
+  const el = document.getElementById('medList');
+  const slots=[];
+  (mb.medicines||[]).forEach((m,i)=>{
+    const ts=m.reminderTimes?.length?m.reminderTimes:['_once'];
+    ts.forEach(t=>slots.push({m,idx:i,t}));
+  });
+  const total=slots.length, taken=slots.filter(s=>!!s.m.takenTimes?.[s.t]).length;
+  const pct=total?Math.round((taken/total)*100):0;
+  document.getElementById('stTotal').textContent=total;
+  document.getElementById('stTaken').textContent=taken;
+  document.getElementById('stPending').textContent=total-taken;
+  document.getElementById('medProg').style.width=pct+'%';
+  document.getElementById('medProgTxt').textContent=`${taken} of ${total} taken`;
+  if(!mb.medicines?.length){
+    el.innerHTML=`<div class="empty"><div class="empty-text">No medicines added yet.<br>Tap <b>Add a Medicine</b> above.</div></div>`;return;
+  }
+  const nowMins=new Date().getHours()*60+new Date().getMinutes();
+  slots.sort((a,b)=>{
+    // Overdue (not taken, past time) always first
+    const nowM=new Date().getHours()*60+new Date().getMinutes();
+    const getOv=s=>{ if(s.t==='_once'||!!s.m.takenTimes?.[s.t])return false; const[h,m]=s.t.split(':').map(Number);return(h*60+m)<nowM; };
+    const aOv=getOv(a),bOv=getOv(b);
+    if(aOv&&!bOv)return -1; if(!aOv&&bOv)return 1;
+    if(a.t==='_once')return 1;if(b.t==='_once')return -1;
+    return a.t.localeCompare(b.t);
+  });
+  el.innerHTML=slots.map(({m,idx,t})=>{
+    const isTaken=!!m.takenTimes?.[t], takenAt=m.takenTimes?.[t];
+    const [h,mi]=t!=='_once'?t.split(':').map(Number):[0,0];
+    const diff=t!=='_once'?(h*60+mi)-nowMins:1;
+    const isOv=!isTaken&&diff<-1&&t!=='_once';
+    const minsLate=isOv?Math.abs(Math.round(diff)):0;
+    const lateStr=minsLate>=60?`${Math.floor(minsLate/60)}h ${minsLate%60}m late`:`${minsLate}m late`;
+    const amt=m.kind==='liquid'?m.qty+' ml':m.qty+(m.qty==1?' tablet':' tablets');
+    return`
+    <div class="med-item ${isTaken?'taken-item':''} ${isOv?'overdue-item':''}">
+      ${isOv?`<div class="overdue-banner"><span class="ob-icon">!</span> OVERDUE — ${lateStr} — Take it now</div>`:''}
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div class="med-strip" style="background:${m.colour};"></div>
+        <div style="flex:1; min-width: 0;">
+          <div class="med-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.name}${m.kind==='liquid'?' (liquid)':''}</div>
+          <div class="med-meta">
+            <span class="ss-badge b-teal">${amt}</span>
+            ${t!=='_once'?`<span class="ss-badge b-teal">${fmt12(t)}</span>`:''}
+            ${m.food?`<span class="ss-badge b-amber">${m.food}</span>`:''}
+            ${isTaken?`<span class="ss-badge b-green">Taken ${typeof takenAt==='string'?takenAt:''}</span>`:''}
+          </div>
+          ${m.notes?`<div class="med-note">${m.notes}</div>`:''}
+        </div>
+      </div>
+      ${mb.isPeer 
+        ? `<div style="text-align:center; padding: 0.5rem; font-weight:700; color:var(--ink3);">Locked — Viewer Node Only</div>`
+        : (!isTaken
+          ?`<button class="take-btn${isOv?' overdue':''}" onclick="takeMed(${idx},'${t}')">${isOv?'! Take Now — Overdue':'Mark as Taken'}</button>`
+          : `<button class="btn btn-ghost btn-full" style="margin-top:0.75rem;" onclick="undoTakeMed(${idx},'${t}')">Undo — Mark as Not Taken</button>`)
+      }
+      ${mb.isPeer ? '' : `
+      <div class="med-actions" style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="editMed(${idx})">Edit</button>
+        <button class="btn btn-coral btn-sm" style="flex:1;" onclick="deleteMed(${idx})">Delete</button>
+      </div>`}
+    </div>`;
+  }).join('');
+}
+
+// ── WATER TAB ──
+function renderWater(){
+  const mb=activeMember();if(!mb)return;
+  const goal=mb.waterGoal||2000, pct=Math.min(100,Math.round((mb.waterMl/goal)*100));
+  const circ=2*Math.PI*90;
+  document.getElementById('waterRing').style.strokeDashoffset=circ-(circ*pct/100);
+  document.getElementById('wMl').textContent=mb.waterMl;
+  document.getElementById('wPct').textContent=pct+'% of goal';
+  document.getElementById('stWml').textContent=mb.waterMl;
+  document.getElementById('stWpct').textContent=pct+'%';
+  const left=Math.max(0,goal-mb.waterMl);
+  document.getElementById('stWleft').textContent=left<1000?left:(left/1000).toFixed(1)+'L';
+  document.getElementById('wGoalDisp').textContent=goal;
+  const g=document.getElementById('glassGrid');
+  const labels=['Cup','Glass','Mug','Bottle'];
+  g.innerHTML=(mb.presets||[150,250,350,500]).map((ml,i)=>`
+    <button class="glass-btn" ${mb.isPeer?'disabled style="opacity:0.6"':''} onclick="addWater(${ml})">
+      <span class="glass-name">${labels[i]||'Drink'}</span>
+      <span class="glass-ml">${ml} ml</span>
+    </button>`).join('');
+}
+
+function addWater(ml){
+  const mb=activeMember();if(!mb||mb.isPeer)return;
+  const before=mb.waterMl;
+  mb.waterMl+=ml;
+  if(!Array.isArray(mb.waterHistory))mb.waterHistory=[];
+  mb.waterHistory.push({ml,before,time:timeNow()});
+  addLog(mb,'',`Drank ${ml} ml`,'+'+ml+' ml','#2d7a55');
+  saveState();render();toast(`+${ml} ml added`,'ok');
+}
+function undoWater(){
+  const mb=activeMember();if(!mb||mb.isPeer)return;
+  if(!Array.isArray(mb.waterHistory)||!mb.waterHistory.length)return toast('Nothing to undo','warn');
+  const last=mb.waterHistory.pop();
+  mb.waterMl=typeof last.before==='number'?last.before:Math.max(0,mb.waterMl-last.ml);
+  addLog(mb,'',`Undid ${last.ml} ml`,'-'+last.ml+' ml','#d95f4b');
+  saveState();render();toast(`Removed ${last.ml} ml`,'warn');
+}
+function resetWater(){
+  const mb=activeMember();if(!mb||mb.isPeer)return;
+  if(!confirm('Reset today\'s water to zero?'))return;
+  mb.waterMl=0;mb.waterHistory=[];
+  addLog(mb,'','Water reset','0 ml','#d95f4b');
+  saveState();render();toast('Water reset','warn');
+}
+function openCustomWater(){
+  if(activeMember()?.isPeer) return toast('External sync accounts are view-only','warn');
+  openModal('Add Water or Drink',`
+    <div class="form-group"><label>How many ml?</label><input type="number" id="cml" placeholder="e.g. 330" min="1" autofocus></div>
+    <div class="form-group"><label>What did you drink?</label>
+      <select id="ctype">
+        <option>Water</option><option>Juice</option><option>Milk</option>
+        <option>Tea or Coffee</option><option>Soup</option><option>Other</option>
+      </select></div>
+    <button class="btn btn-forest btn-full" onclick="submitCustomWater()">Add</button>`);
+}
+function submitCustomWater(){
+  const ml=parseInt(document.getElementById('cml').value);
+  const type=document.getElementById('ctype').value;
+  if(!ml||ml<1)return toast('Please enter an amount','err');
+  const mb=activeMember();if(!mb||mb.isPeer)return;
+  const before=mb.waterMl;
+  mb.waterMl+=ml;
+  if(!Array.isArray(mb.waterHistory))mb.waterHistory=[];
+  mb.waterHistory.push({ml,before,time:timeNow()});
+  addLog(mb,'💧',`Drank ${ml} ml of ${type}`,'+'+ml+' ml','#2d7a55');
+  saveState();render();closeModal();toast(`+${ml} ml of ${type} added`,'ok');
+}
+
+// ── MEDICINES ──
+let _medDraft={},_medEditIdx=-1;
+
+function openAddMed(){
+  if(activeMember()?.isPeer) return toast('External accounts are read-only','warn');
+  _medDraft={name:'',kind:'tablet',qty:1,colour:MED_COLOURS[0],food:'After meals',notes:'',reminderTimes:[]};
+  _medEditIdx=-1;
+  openModal('Add a Medicine',buildMedModal());showMedStep(0);
+}
+function editMed(i){
+  const mb=activeMember();if(!mb||mb.isPeer)return;
+  _medDraft={...mb.medicines[i],reminderTimes:[...(mb.medicines[i].reminderTimes||[])]};
+  _medEditIdx=i;
+  openModal('Edit Medicine',buildMedModal());showMedStep(0);
+}
+function buildMedModal(){ return`
+  <div class="step-dots"><div class="step-dot active" id="sd0"></div><div class="step-dot" id="sd1"></div></div>
+  <div class="modal-step active" id="ms0">
+    <div style="font-size:var(--t-sm);font-weight:800;color:var(--ink4);margin-bottom:0.9rem;">Step 1 of 2 — What is it?</div>
+    <div class="kind-toggle">
+      <button type="button" class="kind-btn ${(_medDraft.kind||'tablet')==='tablet'?'active':''}" onclick="selKind('tablet',this)">
+        <span class="ki" style="font-size:1.1rem;font-weight:900;letter-spacing:-1px;">TAB</span>Tablet / Capsule
+      </button>
+      <button type="button" class="kind-btn ${_medDraft.kind==='liquid'?'active':''}" onclick="selKind('liquid',this)">
+        <span class="ki" style="font-size:1.1rem;font-weight:900;letter-spacing:-1px;">LIQ</span>Syrup / Liquid
+      </button>
+    </div>
+    <div class="form-group"><label>Medicine Name</label><input type="text" id="mName" placeholder="e.g. Blood Pressure Tablet" value="${_medDraft.name}"></div>
+    <div class="form-row">
+      <div class="form-group"><label id="doseLabel">${_medDraft.kind==='liquid'?'Amount (ml)':'Tablets per dose'}</label>
+        <input type="number" id="mQty" placeholder="${_medDraft.kind==='liquid'?'e.g. 10':'e.g. 1'}" value="${_medDraft.qty||1}" min="0.5" step="0.5">
+      </div>
+      <div class="form-group"><label>When to take</label>
+        <select id="mFood">
+          ${['Before meals','After meals','With meals','Empty stomach','No restriction'].map(f=>`<option ${(_medDraft.food||'')==f?'selected':''}>${f}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Colour (to tell medicines apart)</label>
+      <div class="colour-row" id="medColRow">
+        ${MED_COLOURS.map(c=>`<div class="colour-dot ${c===(_medDraft.colour||MED_COLOURS[0])?'selected':''}" style="background:${c};" onclick="selMedColour(this,'${c}')"></div>`).join('')}
+      </div>
+      <input type="hidden" id="mColour" value="${_medDraft.colour||MED_COLOURS[0]}">
+    </div>
+    <div class="form-group"><label>Extra Notes (optional)</label><input type="text" id="mNotes" placeholder="e.g. Take with a full glass of water" value="${_medDraft.notes||''}"></div>
+    <button class="btn btn-forest btn-full" onclick="medNext()">Next — Set Reminder Times</button>
+  </div>
+  <div class="modal-step" id="ms1">
+    <div style="font-size:var(--t-sm);font-weight:800;color:var(--ink4);margin-bottom:0.8rem;">Step 2 of 2 — When should we remind you?</div>
+    <div id="timePicker"></div>
+    <div style="display:flex;gap:0.65rem;margin-top:1.1rem;">
+      <button class="btn btn-ghost" style="flex:0 0 auto;" onclick="showMedStep(0)">← Back</button>
+      <button class="btn btn-forest btn-full" onclick="saveMed()">Save Medicine</button>
+    </div>
+  </div>`; }
+
+function selKind(k,el){
+  _medDraft.kind=k;
+  document.querySelectorAll('.kind-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('doseLabel').textContent=k==='liquid'?'Amount (ml)':'Tablets per dose';
+  document.getElementById('mQty').placeholder=k==='liquid'?'e.g. 10':'e.g. 1';
+}
+function selMedColour(el,c){
+  document.querySelectorAll('#medColRow .colour-dot').forEach(d=>d.classList.remove('selected'));
+  el.classList.add('selected');document.getElementById('mColour').value=c;
+}
+function showMedStep(n){
+  [0,1].forEach(i=>{ const el=document.getElementById('ms'+i); if(el) el.classList.toggle('active',i===n); });
+  [0,1].forEach(i=>{ const d=document.getElementById('sd'+i); if(!d)return; d.classList.remove('active','done'); if(i===n)d.classList.add('active'); else if(i<n)d.classList.add('done'); });
+  if(n===1) buildTimePicker();
+}
+function medNext(){
+  const name=document.getElementById('mName').value.trim();
+  if(!name)return toast('Please enter the medicine name','err');
+  _medDraft.name=name;
+  _medDraft.qty=parseFloat(document.getElementById('mQty').value)||1;
+  _medDraft.food=document.getElementById('mFood').value;
+  _medDraft.colour=document.getElementById('mColour').value;
+  _medDraft.notes=document.getElementById('mNotes').value.trim();
+  showMedStep(1);
+}
+
+const QUICK_TIMES=[
+  {l:'Morning',t:'08:00'},{l:'Midday',t:'12:00'},
+  {l:'Afternoon',t:'15:00'},{l:'Evening',t:'18:00'},
+  {l:'Bedtime',t:'21:00'},{l:'Late Night',t:'22:00'},
+];
+function buildTimePicker(){
+  document.getElementById('timePicker').innerHTML=`
+    <div style="font-size:var(--t-sm);color:var(--ink2);font-weight:700;margin-bottom:0.75rem;">
+      Tap each time you want a reminder. You can pick more than one.
+    </div>
+    <div class="time-chip-grid">
+      ${QUICK_TIMES.map(p=>`<div class="time-chip ${_medDraft.reminderTimes.includes(p.t)?'sel':''}" onclick="toggleTime('${p.t}',this)">
+        <span class="tc-time">${fmt12(p.t)}</span><span class="tc-lbl">${p.l}</span>
+      </div>`).join('')}
+    </div>
+    <div style="margin-top:0.9rem;">
+      <label>Or enter an exact time:</label>
+      <div style="display:flex;gap:0.65rem;margin-top:0.45rem;">
+        <input type="time" id="customTime" style="flex:1;">
+        <button class="btn btn-ghost btn-sm" onclick="addCustomTime()">＋ Add</button>
+      </div>
+    </div>
+    <div id="selTimesWrap" style="margin-top:0.8rem;display:flex;flex-wrap:wrap;gap:5px;"></div>`;
+  renderSelTimes();
+}
+function toggleTime(t,el){
+  const i=_medDraft.reminderTimes.indexOf(t);
+  if(i>=0){_medDraft.reminderTimes.splice(i,1);el.classList.remove('sel');}
+  else{_medDraft.reminderTimes.push(t);el.classList.add('sel');}
+  _medDraft.reminderTimes.sort();renderSelTimes();
+}
+function addCustomTime(){
+  const v=document.getElementById('customTime').value;
+  if(!v)return toast('Please pick a time first','err');
+  if(!_medDraft.reminderTimes.includes(v)){_medDraft.reminderTimes.push(v);_medDraft.reminderTimes.sort();}
+  renderSelTimes();
+}
+function removeTime(t){_medDraft.reminderTimes=_medDraft.reminderTimes.filter(x=>x!==t);renderSelTimes();}
+function renderSelTimes(){
+  const w=document.getElementById('selTimesWrap');if(!w)return;
+  w.innerHTML=_medDraft.reminderTimes.length
+    ?_medDraft.reminderTimes.map(t=>`<div class="time-tag">${fmt12(t)}<button onclick="removeTime('${t}')">✕</button></div>`).join('')
+    :'<div style="font-size:var(--t-xs);color:var(--ink4);font-weight:700;margin-top:4px;">No times chosen yet.</div>';
+}
+function saveMed(){
+  const mb=activeMember();if(!mb||mb.isPeer)return;
+  if(!_medDraft.name)return toast('Medicine name is missing','err');
+  const obj={name:_medDraft.name,kind:_medDraft.kind||'tablet',qty:_medDraft.qty||1,
+    food:_medDraft.food,notes:_medDraft.notes,colour:_medDraft.colour||MED_COLOURS[0],
+    reminderTimes:[..._medDraft.reminderTimes],takenTimes:{},notifiedTimes:{}};
+  if(_medEditIdx>=0){
+    const prev=mb.medicines[_medEditIdx];
+    obj.takenTimes=Object.fromEntries(Object.entries(prev.takenTimes||{}).filter(([k])=>obj.reminderTimes.includes(k)));
+    obj.notifiedTimes=Object.fromEntries(Object.entries(prev.notifiedTimes||{}).filter(([k])=>obj.reminderTimes.includes(k)));
+    mb.medicines[_medEditIdx]=normMed(obj);
+  } else mb.medicines.push(normMed(obj));
+  saveState();render();closeModal();
+  // Auto-set a native phone alarm for every reminder time chosen
+  if(obj.reminderTimes.length){
+    setTimeout(()=>setNativeAlarmsForMed(obj.name, obj.reminderTimes), 400);
+  } else {
+    toast(`${obj.name} ${_medEditIdx>=0?'updated':'added'}`,'ok');
+  }
+}
+function takeMed(i,t){
+  const mb=activeMember();if(!mb||mb.isPeer)return;
+  const m=mb.medicines[i];const k=t||'_once';
+  m.takenTimes[k]=timeNow();m.notifiedTimes[k]=true;
+  const amt=m.kind==='liquid'?m.qty+' ml':m.qty+(m.qty==1?' tablet':' tablets');
+  addLog(mb,'',`Took ${m.name}${t?' ('+fmt12(t)+')':''}`,amt,'#2d7a55');
+  saveState();render();toast(`${m.name} marked as taken`,'ok');
+}
+function undoTakeMed(i,t){
+  const mb=activeMember();if(!mb||mb.isPeer)return;
+  const med=mb.medicines[i];if(!med)return;
+  const key=t||'_once';
+  if(!med.takenTimes||!(key in med.takenTimes))return toast('Already not taken','warn');
+  delete med.takenTimes[key];
+  // Also clear notified flag so alarm can re-fire if needed
+  if(med.notifiedTimes)delete med.notifiedTimes[key];
+  addLog(mb,'',`Undid ${med.name}${t?' ('+fmt12(t)+')':''}`,'-1 dose','#d95f4b');
+  saveState();render();toast(`${med.name} marked as not taken`,'warn');
+}
+function deleteMed(i){
+  const mb=activeMember();if(!mb||mb.isPeer)return;
+  if(!confirm(`Delete "${mb.medicines[i].name}"?`))return;
+  mb.medicines.splice(i,1);saveState();render();toast('Medicine deleted','warn');
+}
+
+function setNativeAlarm(timeString, medicineName) {
+  const [hours, minutes] = timeString.split(':');
+  const isAndroid = /android/i.test(navigator.userAgent);
+  if (isAndroid) {
+    window.location.href = `intent://page/AlarmClock?hour=${hours}&minutes=${minutes}&message=${encodeURIComponent('Take ' + medicineName)}&skipUi=false#Intent;scheme=android-app;end`;
+  } else {
+    // iOS: open Clock app directly; user saves the alarm themselves
+    window.location.href = 'clock-alarm://';
+    setTimeout(() => {
+      // Fallback if clock-alarm:// not handled — try calshow://
+    }, 300);
+    toast('Clock app opened — set alarm for ' + timeString + ' labelled: Take ' + medicineName, 'ok');
+  }
+}
+
+// Called after saving a medicine — sequences one alarm per time with a delay
+// so the OS has time to open, register, and return before the next one.
+function setNativeAlarmsForMed(medName, times) {
+  const isAndroid = /android/i.test(navigator.userAgent);
+  if (times.length === 0) return;
+
+  if (isAndroid) {
+    // Android: fire all alarms in sequence with 1.5s gaps
+    // Each intent opens Clock, pre-fills the alarm, user taps Save once
+    let i = 0;
+    function fireNext() {
+      if (i >= times.length) {
+        toast(medName + ' added. Tap Save in the Clock app for each alarm.', 'ok');
+        return;
+      }
+      setNativeAlarm(times[i], medName);
+      i++;
+      setTimeout(fireNext, 1500);
+    }
+    toast('Opening Clock app to set ' + times.length + ' alarm' + (times.length > 1 ? 's' : '') + ' for ' + medName + '…', 'ok');
+    setTimeout(fireNext, 300);
+  } else {
+    // iOS: open Clock app once; tell the user exactly what alarms to set
+    const timeList = times.map(t => fmt12(t)).join(', ');
+    window.location.href = 'clock-alarm://';
+    setTimeout(() => {
+      openModal('Set Alarms on iPhone', `
+        <div style="font-size:var(--t-md);color:var(--ink2);line-height:1.9;">
+          Your Clock app should have opened.<br><br>
+          Please set an alarm for each of these times and label it <b>"Take ${medName}"</b>:
+          <div style="margin:1rem 0;padding:1rem;background:var(--leaf-xlt);border-radius:var(--r-md);font-size:var(--t-lg);font-weight:900;color:var(--forest);text-align:center;letter-spacing:1px;">
+            ${timeList}
+          </div>
+          Tap <b>+</b> in the Clock app, set the time and label, then tap <b>Save</b>.
+        </div>
+        <button class="btn btn-forest btn-full" style="margin-top:1rem;" onclick="closeModal()">Got it</button>
+      `);
+    }, 500);
+  }
+}
+
+// ── LOG ──
+function addLog(mb,icon,text,amount,colour){
+  mb.log.unshift({icon,text,amount,colour,time:timeNow()});
+  if(mb.log.length>80) mb.log=mb.log.slice(0,80);
+}
+function renderLog(){
+  const mb=activeMember();if(!mb)return;
+  const el=document.getElementById('logList');
+  if(!mb.log.length){el.innerHTML='<div class="no-data">Nothing recorded yet today.</div>';return;}
+  el.innerHTML=mb.log.map(l=>`
+    <div class="log-item">
+      <span style="font-size:1.3rem;">${l.icon}</span>
+      <span class="log-time">${l.time}</span>
+      <span class="log-text">${l.text}</span>
+      <span class="log-amount" style="color:${l.colour};">${l.amount}</span>
+    </div>`).join('');
+}
+function clearLog(){
+  const mb=activeMember();if(!mb||mb.isPeer)return;
+  if(!confirm('Clear history?'))return;
+  mb.log=[];saveState();renderLog();toast('History cleared','warn');
+}
+
+// ── MEMBER MANAGEMENT ──
+const RELATIONS=['Parent','Mother','Father','Grandparent','Grandmother','Grandfather',
+  'Spouse','Partner','Sibling','Child','Myself','Other'];
+
+function openAddMember(){
+  openModal('Add Family Member', buildMemberForm({name:'',relation:'',avatarColour:AVATAR_COLOURS[1],waterGoal:2000,presets:[150,250,350,500]},false));
+}
+function openEditMember(id){
+  const mb=state.members.find(m=>m.id===id);if(!mb)return;
+  openModal('Edit '+mb.name, buildMemberForm(mb,true));
+}
+function buildMemberForm(mb,isEdit){ return`
+  <div class="form-group"><label>Name</label><input type="text" id="mbName" placeholder="e.g. Mum" value="${mb.name||''}"></div>
+  <div class="form-group"><label>Relationship</label>
+    <select id="mbRel">
+      <option value="">— Select —</option>
+      ${RELATIONS.map(r=>`<option ${mb.relation===r?'selected':''}>${r}</option>`).join('')}
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Avatar Colour</label>
+    <div class="avatar-colours" id="avColRow">
+      ${AVATAR_COLOURS.map(c=>`
+        <div class="av-colour ${c===(mb.avatarColour||AVATAR_COLOURS[0])?'selected':''}" style="background:${c};"
+          id="avc_${c.replace('#','')}"
+          onclick="selAvColour(this,'${c}')">
+          ${mb.name?mb.name[0].toUpperCase():'A'}
+        </div>`).join('')}
+    </div>
+    <input type="hidden" id="mbColour" value="${mb.avatarColour||AVATAR_COLOURS[0]}">
+  </div>
+  <div class="form-group"><label>Daily Water Goal (ml)</label><input type="number" id="mbGoal" placeholder="2000" value="${mb.waterGoal||2000}"></div>
+  ${isEdit?`
+    <button class="btn btn-coral btn-full" style="margin-bottom:0.75rem;" onclick="deleteMember('${mb.id}')">Remove This Member</button>`:''}
+  <button class="btn btn-forest btn-full" onclick="saveMember('${mb.id||''}',${isEdit})">${isEdit?'Save Changes':'+ Add Member'}</button>`; }
+
+function selAvColour(el,c){
+  document.querySelectorAll('#avColRow .av-colour').forEach(d=>d.classList.remove('selected'));
+  el.classList.add('selected');document.getElementById('mbColour').value=c;
+  const nameVal=(document.getElementById('mbName').value||'A')[0].toUpperCase();
+  document.querySelectorAll('#avColRow .av-colour').forEach(d=>d.textContent=nameVal);
+}
+
+function saveMember(existingId,isEdit){
+  const name=(document.getElementById('mbName').value||'').trim();
+  if(!name)return toast('Please enter a name','err');
+  const rel=document.getElementById('mbRel').value;
+  const colour=document.getElementById('mbColour').value;
+  const goal=parseInt(document.getElementById('mbGoal').value)||2000;
+  if(isEdit){
+    const mb=state.members.find(m=>m.id===existingId);if(!mb)return;
+    mb.name=name;mb.relation=rel;mb.avatarColour=colour;mb.waterGoal=goal;
+  } else {
+    const id=newMemberId();
+    state.members.push({id,name,relation:rel,avatarColour:colour,
+      waterMl:0,waterGoal:goal,waterHistory:[],presets:[150,250,350,500],
+      medicines:[],log:[]});
+    state.activeMemberId=id;
+  }
+  saveState();render();closeModal();toast(`${name} ${isEdit?'updated':'added'}`,'ok');
+}
+function deleteMember(id){
+  if(state.members.length<=1)return toast('You need at least one member','warn');
+  const mb=state.members.find(m=>m.id===id);if(!mb)return;
+  if(!confirm(`Remove ${mb.name} and all their data?`))return;
+  state.members=state.members.filter(m=>m.id!==id);
+  if(state.activeMemberId===id) state.activeMemberId=state.members[0].id;
+  saveState();render();closeModal();toast(`${mb.name} removed`,'warn');
+}
+function switchMember(id){
+  state.activeMemberId=id;_rawSave();render();
+}
+
+// ── SETTINGS ──
+function renderMemberSettingsList(){
+  const el=document.getElementById('memberSettingsList');if(!el)return;
+  el.innerHTML=state.members.map(mb=>`
+    <div style="display:flex;align-items:center;gap:0.9rem;padding:0.9rem 0;border-bottom:1.5px solid var(--rule);">
+      <div style="width:46px;height:46px;border-radius:50%;background:${mb.avatarColour};display:flex;align-items:center;justify-content:center;color:white;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;flex-shrink:0;">
+        ${mb.name[0].toUpperCase()}
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:var(--t-md);font-weight:900;color:var(--ink);">${mb.name}</div>
+        <div style="font-size:var(--t-xs);color:var(--ink4);">${mb.relation||'Family Member'} · ${mb.medicines?.length || 0} medicine${mb.medicines?.length!==1?'s':''}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openEditMember('${mb.id}')">Edit</button>
+    </div>`).join('');
+}
+function loadSettingsUI(){
+  document.getElementById('setGoal').value=activeMember()?.waterGoal||2000;
+  [1,2,3,4].forEach(n=>{ document.getElementById('p'+n).value=(activeMember()?.presets||[150,250,350,500])[n-1]; });
+  document.getElementById('togAutoReset').checked=state.settings?.autoReset!==false;
+  document.getElementById('togReminders').checked=state.settings?.reminders!==false;
+  document.getElementById('leadTime').value=state.settings?.leadTime??5;
+  updateNotifUI();renderMemberSettingsList();renderOtherPersonDashboard();
+}
+function saveSettings(){
+  const mb=activeMember();
+  if(mb && !mb.isPeer){
+    const goal=parseInt(document.getElementById('setGoal').value);
+    if(goal&&goal>=100)mb.waterGoal=goal;
+    const pvals=[1,2,3,4].map(n=>parseInt(document.getElementById('p'+n).value)).filter(Boolean);
+    if(pvals.length===4)mb.presets=pvals;
+  }
+  state.settings={
+    autoReset:document.getElementById('togAutoReset').checked,
+    reminders:document.getElementById('togReminders').checked,
+    leadTime:parseInt(document.getElementById('leadTime').value)||5
+  };
+  saveState();render();toast('Settings saved','ok');
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`dailycare_${todayStr()}.json`;a.click();toast('Data exported','ok');
+}
+function hardReset(){
+  if(!confirm('This will delete ALL members, medicines and logs. Are you sure?'))return;
+  localStorage.clear();location.reload();
+}
+
+// ── REMINDER ENGINE ──
+let _lastMin2='';
+function checkReminders(hhmm){
+  if(state.settings?.reminders===false)return;
+  const now=new Date();
+  const cur=hhmm||String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  if(cur===_lastMin2)return;_lastMin2=cur;
+  const lead=state.settings?.leadTime??5;
+  const nowMins=now.getHours()*60+now.getMinutes();
+  state.members.forEach(mb=>{
+    (mb.medicines||[]).forEach((m,i)=>{
+      (m.reminderTimes||[]).forEach(t=>{
+        if(m.takenTimes?.[t]||m.notifiedTimes?.[t])return;
+        const[h,mi]=t.split(':').map(Number);
+        const diff=(h*60+mi)-nowMins;
+        if(diff<=lead&&diff>=-2){
+          sendNotif(mb,m,t,diff);
+          if(!m.notifiedTimes) m.notifiedTimes = {};
+          m.notifiedTimes[t]=true;_rawSave();
+        }
+      });
+    });
+  });
+}
+function sendNotif(mb,med,time,diff){
+  const amt=med.kind==='liquid'?med.qty+' ml':med.qty+(med.qty==1?' tablet':' tablets');
+  const body=diff<=0?`Please take now — ${amt}. ${med.food||''}`
+    :`Due in ${diff} min at ${fmt12(time)} — ${amt}. ${med.food||''}`;
+  const title=`${mb.name}: Time for ${med.name}`;
+  if(window.Notification&&Notification.permission==='granted'){
+    const n=new Notification(title,{body,icon:'icons/icon-192.png',tag:`${mb.id}-${med.name}-${time}`,requireInteraction:true});
+    n.onclick=()=>window.focus();
+  } else {
+    toast(`Reminder: ${title} — ${body}`,'warn');
+  }
+}
+function requestNotifPerms(){ /* alarms handled natively */ }
+
+// ── MODAL ──
+function openModal(title,content){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalContent').innerHTML=content;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){
+  if (window.otpInterval) clearInterval(window.otpInterval);
+  if (window.broadcastTrackerInterval) clearInterval(window.broadcastTrackerInterval);
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ── TOAST ──
+function toast(msg,type='ok'){
+  const c=document.getElementById('toastWrap');
+  const el=document.createElement('div');el.className='toast';
+  el.innerHTML=`${msg}`;
+  c.appendChild(el);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),250);},2800);
+}
+
+// ── TABS ──
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(name==='settings')loadSettingsUI();
+}
+
+// ── DAY RESET ──
+function checkDayReset(){
+  const saved=localStorage.getItem(DATE_KEY);
+  if(saved&&saved!==todayStr()){loadState();render();toast('Good morning! New day started','ok');}
+}
+
+// ══════════════════════════════════════════════════════
+//  LIVE WEB REAL-TIME COUPLING LOGIC (Unified Stream)
+// ══════════════════════════════════════════════════════
+function generateSecretKey() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ234567';
+  let secret = '';
+  for (let i = 0; i < 16; i++) { secret += chars.charAt(Math.floor(Math.random() * chars.length)); }
+  return secret;
+}
+
+function getTOTPCode(secret) {
+  const timeBlock = Math.floor(Date.now() / 30000); 
+  let seed = 0;
+  for (let i = 0; i < secret.length; i++) { seed += secret.charCodeAt(i) * (i + 1); }
+  seed = (seed * timeBlock) % 999983;
+  return (seed % 1000000).toString().padStart(6, '0');
+}
+
+// ══════════════════════════════════════════════════════
+//  PING / NUDGE SYSTEM
+//  Viewer → Sharer: sends a medicine or water reminder
+//  over a dedicated ping channel (secret + "_ping" suffix)
+//  Sharer's device picks it up via SSE and shows a banner.
+// ══════════════════════════════════════════════════════
+
+// pingChannelId removed — not needed
+
+async function sendPing(peer, type) {
+  // Derive the same channelId the receiver used to save their subscription
+  const channelId = generateChannelId(peer.secret + '_push_v1');
+
+  try {
+    const res = await fetch(DAILYCARE_BACKEND_URL + '/send-push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        channelId,
+        type,
+        fromName: state.members[0]?.name || 'Your caregiver'
+      })
+    });
+
+    if (res.ok) {
+      const label = type === 'medicine' ? '💊 Medicine' : '💧 Water';
+      toast(`${label} reminder sent to ${peer.name}`, 'ok');
+    } else if (res.status === 404) {
+      toast(`${peer.name} hasn’t enabled notifications yet — ask them to open the app`, 'warn');
+    } else {
+      toast(`Could not reach ${peer.name} — check connection`, 'err');
+    }
+  } catch(e) {
+    toast(`Backend unreachable — check your internet`, 'err');
+  }
+}
+
+// Ping listener removed — WhatsApp handles all reminders
+
+function renderOtherPersonDashboard() {
+  const container = document.getElementById('otherPersonDashboard');
+  if (!container) return;
+
+  const outgoing = (state.otherPersons || []).filter(p => p.verified && !p.isIncomingData);
+  const incoming = (state.otherPersons || []).filter(p => p.verified && p.isIncomingData);
+
+  let html = '';
+
+  if (outgoing.length) {
+    html += `<div class="sec-lbl" style="margin-top:0;">People viewing your profile</div>`;
+    html += outgoing.map((p, idx) => {
+      const realIdx = state.otherPersons.indexOf(p);
+      return `
+      <div style="padding:0.85rem; border:1.5px solid var(--leaf-lt); border-radius:var(--r-md); background:var(--leaf-xlt); margin-bottom:0.65rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+          <div>
+            <div style="font-weight:900; color:var(--ink); font-size:var(--t-md);">${p.name}</div>
+            <div style="font-size:var(--t-xs); color:var(--ink3); margin-top:2px;">Viewing your profile — read only</div>
+            <span class="ss-badge b-green" style="margin-top:5px;">Live</span>
+          </div>
+          <button class="btn btn-coral btn-sm" style="min-height:36px; padding:0 0.75rem; flex-shrink:0;" onclick="deleteOtherPerson(${realIdx})">Stop</button>
+        </div>
+        <div class="ping-bar">
+          <button class="ping-btn med" onclick="sendPing(state.otherPersons[${realIdx}], 'medicine')">Remind: Medicine</button>
+          <button class="ping-btn water" onclick="sendPing(state.otherPersons[${realIdx}], 'water')">Remind: Water</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  if (incoming.length) {
+    html += `<div class="sec-lbl" style="margin-top:${outgoing.length ? '0.75rem' : '0'};">Profiles you are viewing</div>`;
+    html += incoming.map((p) => {
+      const realIdx = state.otherPersons.indexOf(p);
+      return `
+      <div style="padding:0.85rem; border:1.5px solid var(--gold-lt); border-radius:var(--r-md); background:var(--gold-xlt); margin-bottom:0.65rem; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:900; color:var(--ink); font-size:var(--t-md);">👁 ${p.name}</div>
+          <div style="font-size:var(--t-xs); color:var(--ink3); margin-top:2px;">Appears on your Home tab. View only — you cannot edit.</div>
+          <span class="ss-badge b-green" style="margin-top:5px;">● Live</span>
+        </div>
+        <button class="btn btn-coral btn-sm" style="min-height:36px; padding:0 0.75rem; flex-shrink:0;" onclick="deleteOtherPerson(${realIdx})">Remove</button>
+      </div>`;
+    }).join('');
+  }
+
+  if (!outgoing.length && !incoming.length) {
+    html = `<div class="no-data" style="padding:0.75rem 0;">Nothing connected yet. Share your profile or view someone else's.</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+window.activeBroadcastSecret = null;
+window.broadcastTrackerInterval = null;
+
+function openAddOtherPersonModal() { openSimpleShareModal(); }
+
+function startOtpDisplay(secret) {
+  if (window.otpInterval) clearInterval(window.otpInterval);
+  const updateModalOTP = () => {
+    const codeBlock = document.getElementById('modalOtpBlock');
+    const fillBlock = document.getElementById('modalOtpProgress');
+    if (!codeBlock) { clearInterval(window.otpInterval); return; }
+    codeBlock.textContent = getTOTPCode(secret);
+    fillBlock.style.width = `${((30 - (Math.floor(Date.now() / 1000) % 30)) / 30) * 100}%`;
+  };
+  updateModalOTP();
+  window.otpInterval = setInterval(updateModalOTP, 1000);
+}
+
+function startBroadcastWatcher(name, secret) {
+  if (window.broadcastTrackerInterval) clearInterval(window.broadcastTrackerInterval);
+  const channelId = generateChannelId(secret);
+
+  const checkAndBroadcastTick = async () => {
+    try {
+      const personalAccount = state.members[0];
+      const syncPayload = {
+        updatedAt: Date.now(),
+        name: personalAccount.name,
+        avatarColour: personalAccount.avatarColour,
+        waterMl: personalAccount.waterMl,
+        waterGoal: personalAccount.waterGoal,
+        presets: personalAccount.presets,
+        medicines: personalAccount.medicines,
+        log: personalAccount.log,
+
+        handshakeAccepted: false
+      };
+      const res = await fetch(`${PUBLIC_RELAY_BASE}${channelId}/json?poll=1`);
+      const text = await res.text();
+      if (text.trim()) {
+        for (const line of text.split('\n')) {
+          if (!line.trim()) continue;
+          const packet = JSON.parse(line);
+          if (packet.message) {
+            const data = JSON.parse(packet.message);
+            if (data && data.handshakeAccepted === true) {
+              clearInterval(window.broadcastTrackerInterval);
+              clearInterval(window.otpInterval);
+              const verifiedPeer = {
+                id: 'peer_' + Date.now(),
+                name,
+                secret,
+                verified: true,
+                isPeer: true,
+                isIncomingData: false,
+                avatarColour: AVATAR_COLOURS[Math.floor(Math.random() * AVATAR_COLOURS.length)]
+              };
+              if (!state.otherPersons) state.otherPersons = [];
+              state.otherPersons.push(verifiedPeer);
+              saveState();
+              closeModal();
+              render();
+              toast(`✓ ${name} is now viewing your profile!`, 'ok');
+              return;
+            }
+          }
+        }
+      }
+      await fetch(PUBLIC_RELAY_BASE + channelId, { method: 'POST', body: JSON.stringify(syncPayload) });
+    } catch (e) { console.debug("Handshake waiting."); }
+  };
+
+  checkAndBroadcastTick();
+  window.broadcastTrackerInterval = setInterval(checkAndBroadcastTick, 3000);
+}
+
+function viewLiveCode(name, secret) {
+  openSimpleShareModal();
+}
+
+function openReceiveAccessModal() {
+  openModal('View Someone\'s Profile', `
+    <div style="font-size:var(--t-md); color:var(--ink2); line-height:1.7; margin-bottom:1rem; text-align:center;">
+      Ask them to tap <b>"📤 Share My Profile"</b> in their Settings — they will show you a code and a 6-digit number.
+    </div>
+    <div class="form-group">
+      <label style="font-size:var(--t-lg);">Their secret code</label>
+      <input type="text" id="rxSecret" placeholder="Paste or type their code" style="text-transform:uppercase; letter-spacing:1px; font-size:var(--t-md);" autocorrect="off" autocapitalize="characters">
+    </div>
+    <div class="form-group">
+      <label style="font-size:var(--t-lg);">Their 6-digit PIN</label>
+      <input type="number" id="rxCode" placeholder="000000" maxlength="6" inputmode="numeric">
+    </div>
+    <button class="btn btn-forest btn-full" style="font-size:var(--t-lg);" onclick="verifyIncomingCode()">✓ Connect &amp; View Their Profile</button>
+  `);
+}
+
+async function verifyIncomingCode() {
+  const secret = (document.getElementById('rxSecret').value || '').trim().toUpperCase();
+  const code = (document.getElementById('rxCode').value || '').trim();
+
+  if (!secret || !code) return toast('Please enter both the secret code and the PIN.', 'err');
+
+  if (code !== getTOTPCode(secret)) {
+    return toast('The PIN is incorrect or has expired — ask them to read you the current 6-digit number.', 'err');
+  }
+
+  const channelId = generateChannelId(secret);
+  toast('Connecting…', 'ok');
+  
+  try {
+    const res = await fetch(`${PUBLIC_RELAY_BASE}${channelId}/json?poll=1`);
+    const text = await res.text();
+    let initialPayload = null;
+    
+    if (text.trim()) {
+      const lines = text.split('\n');
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        const msg = JSON.parse(line);
+        if (msg.message) { initialPayload = JSON.parse(msg.message); break; }
+      }
+    }
+
+    const newPeer = {
+      id: 'peer_' + Date.now(),
+      name: initialPayload ? initialPayload.name : 'Shared Profile',
+      relation: 'Shared Profile',
+      secret: secret,
+      verified: true,
+      isPeer: true,
+      isIncomingData: true, // this person RECEIVES — they see the sharer's data
+      avatarColour: initialPayload ? initialPayload.avatarColour : '#3b82c4',
+      waterMl: initialPayload ? initialPayload.waterMl : 0,
+      waterGoal: initialPayload ? initialPayload.waterGoal : 2000,
+      presets: initialPayload ? initialPayload.presets : [150, 250, 350, 500],
+      medicines: initialPayload ? initialPayload.medicines : [],
+      log: initialPayload ? initialPayload.log : [],
+      lastSyncTime: Date.now()
+    };
+
+    // Send handshake acceptance back so the sharer knows someone connected
+    const acceptPayload = { ...initialPayload, handshakeAccepted: true, updatedAt: Date.now() };
+    await fetch(PUBLIC_RELAY_BASE + channelId, { method: 'POST', body: JSON.stringify(acceptPayload) });
+
+    if (!state.otherPersons) state.otherPersons = [];
+    state.otherPersons.push(newPeer);
+    // Stay on current member — don't auto-switch. The new tab is there if they want it.
+    
+    saveState();
+    closeModal();
+    const peerIdx = state.otherPersons.length - 1;
+    initializePeerListener(peerIdx);
+    render();
+    toast(`✓ Connected! ${newPeer.name}'s profile now appears in the tabs above.`, 'ok');
+  } catch (e) {
+    toast('Could not connect. Make sure both the code and PIN are correct.', 'err');
+  }
+}
+
+function deleteOtherPerson(idx) {
+  const p = state.otherPersons[idx];
+  if (!p) return;
+  const msg = p.isIncomingData
+    ? `Stop viewing ${p.name}'s profile?`
+    : `Stop sharing your profile with "${p.name}"?`;
+  if (!confirm(msg)) return;
+  const targetId = p.id;
+  
+  if (window.activeSyncIntervals[targetId]) {
+    clearInterval(window.activeSyncIntervals[targetId]);
+    delete window.activeSyncIntervals[targetId];
+  }
+
+  state.otherPersons.splice(idx, 1);
+  if (state.activeMemberId === targetId) state.activeMemberId = state.members[0].id;
+  saveState();
+  render();
+  toast(p.isIncomingData ? `Removed ${p.name}'s profile.` : `Stopped sharing with ${p.name}.`, 'warn');
+}
+
+// ══════════════════════════════════════════════════════
+//  LOGIN — multi-step profile setup, persisted
+// ══════════════════════════════════════════════════════
+const LOGIN_KEY = 'dc_login_name';
+const PROFILE_KEY = 'dc_user_profile';
+
+// Temporary form data collected across steps
+let _loginData = {};
+
+function selGender(el, val) {
+  document.querySelectorAll('.gc').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel');
+  _loginData.gender = val;
+}
+function selBG(el, val) {
+  document.querySelectorAll('.bgc').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel');
+  _loginData.bloodGroup = val;
+}
+function togCond(el, val) {
+  el.classList.toggle('sel');
+  if (!_loginData.conditions) _loginData.conditions = [];
+  if (el.classList.contains('sel')) {
+    if (!_loginData.conditions.includes(val)) _loginData.conditions.push(val);
+  } else {
+    _loginData.conditions = _loginData.conditions.filter(c => c !== val);
+  }
+}
+
+function loginNext(step) {
+  if (step === 1) {
+    const fname = (document.getElementById('lf_fname').value || '').trim();
+    if (!fname) {
+      document.getElementById('lf_fname').classList.add('error');
+      document.getElementById('lf_fname').focus();
+      return;
+    }
+    document.getElementById('lf_fname').classList.remove('error');
+    _loginData.firstName = fname;
+    _loginData.lastName = (document.getElementById('lf_lname').value || '').trim();
+    _loginData.age = (document.getElementById('lf_age').value || '').trim();
+    _loginData.phone = (document.getElementById('lf_phone').value || '').trim();
+    goLoginStep(2);
+  } else if (step === 2) {
+    _loginData.weight = (document.getElementById('lf_weight').value || '').trim();
+    _loginData.weightUnit = document.getElementById('lf_weight_unit').value;
+    _loginData.condOther = (document.getElementById('lf_cond_other').value || '').trim();
+    _loginData.allergies = (document.getElementById('lf_allergies').value || '').trim();
+    goLoginStep(3);
+  } else if (step === 3) {
+    _loginData.ecName = (document.getElementById('lf_ec_name').value || '').trim();
+    _loginData.ecPhone = (document.getElementById('lf_ec_phone').value || '').trim();
+    _loginData.ecRel = document.getElementById('lf_ec_rel').value;
+    _loginData.doctorName = (document.getElementById('lf_doctor').value || '').trim();
+    _loginData.doctorPhone = (document.getElementById('lf_doctor_phone').value || '').trim();
+    buildLoginSummary();
+    goLoginStep(4);
+  }
+}
+
+function loginBack(step) {
+  goLoginStep(step - 1);
+}
+
+function goLoginStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const s = document.getElementById('lstep' + i);
+    const d = document.getElementById('lsd' + i);
+    const l = document.getElementById('lsl' + i);
+    if (!s) continue;
+    if (i < n) {
+      s.classList.remove('active');
+      d.classList.remove('active'); d.classList.add('done');
+      d.textContent = '✓';
+      if (l) l.classList.add('done');
+    } else if (i === n) {
+      s.classList.add('active');
+      d.classList.add('active'); d.classList.remove('done');
+      d.textContent = i;
+      if (l) l.classList.remove('done');
+    } else {
+      s.classList.remove('active');
+      d.classList.remove('active'); d.classList.remove('done');
+      d.textContent = i;
+      if (l) l.classList.remove('done');
+    }
+  }
+  // Scroll card to top
+  const card = document.querySelector('.login-card');
+  if (card) card.scrollTop = 0;
+  document.getElementById('loginScreen').scrollTop = 0;
+}
+
+function buildLoginSummary() {
+  const d = _loginData;
+  const fullName = [d.firstName, d.lastName].filter(Boolean).join(' ');
+  const conds = [...(d.conditions || []), d.condOther].filter(Boolean).join(', ') || '—';
+
+  document.getElementById('loginSummary').innerHTML = `
+    <div class="sg-item accent full">
+      <div class="sg-label">Full Name</div>
+      <div class="sg-val" style="font-size:var(--t-lg);">${fullName}</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-label">Age</div>
+      <div class="sg-val">${d.age || '—'} yrs</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-label">Gender</div>
+      <div class="sg-val">${d.gender || '—'}</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-label">Blood Group</div>
+      <div class="sg-val" style="color:var(--coral);">${d.bloodGroup || '—'}</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-label">Weight</div>
+      <div class="sg-val">${d.weight ? d.weight + ' ' + d.weightUnit : '—'}</div>
+    </div>
+    <div class="sg-item full">
+      <div class="sg-label">Conditions</div>
+      <div class="sg-val" style="white-space:normal;line-height:1.5;">${conds}</div>
+    </div>
+    <div class="sg-item full">
+      <div class="sg-label">Allergies</div>
+      <div class="sg-val" style="white-space:normal;">${d.allergies || '—'}</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-label">Emergency Contact</div>
+      <div class="sg-val">${d.ecName || '—'}</div>
+    </div>
+    <div class="sg-item">
+      <div class="sg-label">Contact Phone</div>
+      <div class="sg-val">${d.ecPhone || '—'}</div>
+    </div>
+    ${d.doctorName ? `<div class="sg-item full"><div class="sg-label">Doctor</div><div class="sg-val">${d.doctorName}${d.doctorPhone ? ' · ' + d.doctorPhone : ''}</div></div>` : ''}
+  `;
+}
+
+function doLogin() {
+  const fullName = [_loginData.firstName, _loginData.lastName].filter(Boolean).join(' ') || 'Me';
+  // Save login + full profile
+  localStorage.setItem(LOGIN_KEY, fullName);
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(_loginData));
+  // Update the app member's name
+  if (state.members.length > 0) {
+    state.members[0].name = _loginData.firstName || fullName;
+    saveState();
+    render();
+  }
+  document.getElementById('loginScreen').classList.add('hidden');
+}
+
+function checkLogin() {
+  const savedName = localStorage.getItem(LOGIN_KEY);
+  if (savedName) {
+    if (state.members.length > 0 && state.members[0].name === 'Myself') {
+      state.members[0].name = savedName.split(' ')[0] || savedName;
+      _rawSave();
+    }
+    document.getElementById('loginScreen').classList.add('hidden');
+  } else {
+    document.getElementById('loginScreen').classList.remove('hidden');
+  }
+}
+
+// Enter key on first name goes to age field
+document.addEventListener('DOMContentLoaded', () => {
+  const fname = document.getElementById('lf_fname');
+  if (fname) {
+    fname.addEventListener('input', () => fname.classList.remove('error'));
+    fname.addEventListener('keydown', e => { if (e.key === 'Enter') loginNext(1); });
+  }
+});
+
+// ══════════════════════════════════════════════════════
+//  SIMPLE SHARE MODAL (elderly-friendly, no label needed)
+// ══════════════════════════════════════════════════════
+function openSimpleShareModal() {
+  // Use the logged-in user's name automatically
+  const profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+  const myName = profile.firstName || localStorage.getItem(LOGIN_KEY) || state.members[0]?.name || 'Me';
+  const secretGenerated = generateSecretKey();
+  window.activeBroadcastSecret = secretGenerated;
+
+  openModal('Share Your Profile', `
+    <div style="font-size:var(--t-md); color:var(--ink2); line-height:1.7; margin-bottom:1rem; text-align:center;">
+      Show this code to the person you want to share with.<br>
+      They will see <b style="color:var(--forest);">${myName}'s</b> medicines and water.
+    </div>
+
+    <div class="share-step">
+      <div class="share-hint">Your secret code — they need to type this:</div>
+      <div class="share-code-big" id="shareSecretDisp" style="font-size:1.2rem; word-break:break-all; letter-spacing:2px;">${secretGenerated}</div>
+      <button onclick="copyShareSecret('${secretGenerated}')" class="btn btn-ghost btn-sm" style="margin-top:0.5rem; width:auto;">📋 Copy Code</button>
+    </div>
+    <div class="share-step" style="background:var(--gold-xlt); border-color:var(--gold);">
+      <div class="share-hint">Plus this 6-digit PIN (changes every 30 seconds):</div>
+      <div class="share-code-big" id="modalOtpBlock">000000</div>
+      <div class="totp-progress-bar" style="margin:0;"><div class="totp-progress-fill" id="modalOtpProgress"></div></div>
+      <div class="share-hint" style="margin-top:0.4rem;">They must enter the PIN <b>while it's still showing</b>.</div>
+    </div>
+    <div style="text-align:center; color:var(--ink3); font-size:var(--t-sm); margin-top:0.5rem;">
+      ⏳ Waiting for them to connect…
+    </div>
+    <div style="margin-top:1rem; font-size:var(--t-xs); color:var(--ink4); background:var(--cream); border-radius:var(--r-md); padding:0.75rem; line-height:1.7;">
+      <b>Steps for them:</b><br>
+      1. Open DailyCare on their phone<br>
+      2. Go to <b>Settings → 👁 View Someone's Profile</b><br>
+      3. Type the code and the PIN above
+    </div>
+  `);
+
+  startOtpDisplay(secretGenerated);
+  startBroadcastWatcher(myName, secretGenerated);
+}
+
+function copyShareSecret(secret) {
+  navigator.clipboard?.writeText(secret).then(() => toast('Code copied!', 'ok')).catch(() => {
+    toast('Long-press the code to copy it manually.', 'warn');
+  });
+}
+
+// ── INIT ──
+loadState();
+render();
+checkLogin();
+startAllSyncDaemons();
+setInterval(tickClock,1000);
+tickClock();
+setInterval(checkDayReset,60000);
+
+// ══════════════════════════════════════════════════════
+//  PWA ENGINE
+// ══════════════════════════════════════════════════════
+const UA        = navigator.userAgent;
+const isIOS     = /iphone|ipad|ipod/i.test(UA);
+const isAndroid = /android/i.test(UA);
+const isSafari  = /safari/i.test(UA) && !/chrome|crios|fxios/i.test(UA);
+const isIOSSafari = isIOS && isSafari;
+
+function isPWA() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.navigator.standalone === true;
+}
+function updateNotifUI() {}
+
+// ── iOS install gate ──
+// Shows a one-time banner telling iOS users to install the PWA
+// so Web Push works. Dismissed permanently via localStorage.
+function showIOSInstallBanner() {
+  if (!isIOS) return;
+  if (isPWA()) return;                                    // already installed
+  if (localStorage.getItem('dc_ios_banner_dismissed')) return;
+
+  const banner = document.createElement('div');
+  banner.id = 'iosBanner';
+  banner.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:0.75rem;">
+      <div style="font-size:2rem;flex-shrink:0;">📲</div>
+      <div style="flex:1;">
+        <div style="font-weight:900;font-size:1.05rem;margin-bottom:0.3rem;">Install DailyCare for reminders</div>
+        <div style="font-size:0.9rem;line-height:1.55;opacity:0.92;">
+          To receive medicine &amp; water reminders on iPhone, install DailyCare to your home screen:<br>
+          Tap <b>Share</b> <span style="font-size:1.1rem;">⬆️</span> → <b>Add to Home Screen</b>
+        </div>
+        <button onclick="document.getElementById('iosBanner').remove();localStorage.setItem('dc_ios_banner_dismissed','1');"
+          style="margin-top:0.65rem;background:rgba(255,255,255,0.25);border:1.5px solid rgba(255,255,255,0.6);
+                 color:white;border-radius:8px;padding:6px 16px;font-size:0.9rem;font-weight:700;cursor:pointer;">
+          Got it, dismiss
+        </button>
+      </div>
+    </div>`;
+
+  Object.assign(banner.style, {
+    position:'fixed', bottom:'80px', left:'12px', right:'12px', zIndex:'8000',
+    background:'var(--forest)', color:'white',
+    borderRadius:'14px', padding:'1rem 1.1rem',
+    boxShadow:'0 8px 32px rgba(0,0,0,0.35)',
+    animation:'slideUpBanner 0.4s cubic-bezier(.22,1,.36,1)'
+  });
+
+  // Add keyframe if not present
+  if (!document.getElementById('iosBannerStyle')) {
+    const s = document.createElement('style');
+    s.id = 'iosBannerStyle';
+    s.textContent = '@keyframes slideUpBanner{from{transform:translateY(120%);opacity:0;}to{transform:translateY(0);opacity:1;}}';
+    document.head.appendChild(s);
+  }
+
+  document.body.appendChild(banner);
+}
+
+// ── Push subscription ──
+// Called when receiver opens a shared profile tab.
+// Asks for notification permission, subscribes, and saves
+// the subscription to the backend keyed by channelId.
+async function subscribeToPush(secret) {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    // Platform doesn't support push — show iOS gate if needed
+    if (isIOS) showIOSInstallBanner();
+    return;
+  }
+
+  // iOS requires PWA install for push
+  if (isIOS && !isPWA()) {
+    showIOSInstallBanner();
+    return;
+  }
+
+  try {
+    const reg  = await navigator.serviceWorker.ready;
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') return;
+
+    // Subscribe or reuse existing subscription
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly:      true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+
+    // Save to backend keyed by this peer's push channel
+    const channelId = generateChannelId(secret + '_push_v1');
+    await fetch(DAILYCARE_BACKEND_URL + '/save-subscription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channelId, subscription: sub.toJSON() })
+    });
+
+    console.log('[DailyCare] Push subscription saved for channel', channelId.slice(0, 8));
+  } catch(e) {
+    console.warn('[DailyCare] Push subscribe failed:', e);
+  }
+}
+
+// VAPID key helper
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw     = atob(base64);
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+
+// ── Register SW ──
+async function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    const reg = await navigator.serviceWorker.register('sw.js', { scope: './' });
+    if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+  } catch(e) { console.warn('[DailyCare] SW:', e); }
+}
+registerSW();
+
+// Show iOS banner after a short delay (so it doesn't block initial load)
+setTimeout(showIOSInstallBanner, 3000);
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{
+  "name": "DailyCare — Family Medicine Tracker",
+  "short_name": "DailyCare",
+  "description": "Track medicines, hydration and share health profiles with family — works offline.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#1a4731",
+  "background_color": "#1a4731",
+  "lang": "en",
+  "categories": ["health", "medical", "lifestyle"],
+
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Today's Medicines",
+      "short_name": "Medicines",
+      "description": "Jump straight to today's medicine schedule",
+      "url": "./index.html#meds",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Log Water",
+      "short_name": "Water",
+      "description": "Quickly add water intake",
+      "url": "./index.html#water",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+
+  "screenshots": [],
+
+  "related_applications": [],
+  "prefer_related_applications": false
+}
