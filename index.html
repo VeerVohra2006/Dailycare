@@ -1238,22 +1238,13 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
   <div class="card">
     <div class="card-title">Reminders</div>
     <div class="setting-row">
-      <div class="setting-info"><div class="s-label">Medicine Alarms</div><div class="s-desc" id="notifDesc">Alarms are set automatically in your phone's Clock app when you save a medicine with a reminder time.</div></div>
+      <div class="setting-info"><div class="s-label">Push Notifications</div><div class="s-desc" id="notifDesc">Notifications are sent to your phone at the exact medicine time, even when the screen is locked.</div></div>
     </div>
     <div class="setting-row">
       <div class="setting-info"><div class="s-label">Reminders On / Off</div><div class="s-desc">Turn off to stop all reminder alerts</div></div>
       <label class="toggle"><input type="checkbox" id="togReminders" checked><span class="toggle-slider"></span></label>
     </div>
-    <div class="setting-row">
-      <div class="setting-info"><div class="s-label">Alert Before</div><div class="s-desc">Notify this many minutes before medicine time</div></div>
-      <select id="leadTime" style="width:130px;min-height:50px;font-size:var(--t-md);font-weight:800;">
-        <option value="0">On time</option>
-        <option value="5" selected>5 min</option>
-        <option value="10">10 min</option>
-        <option value="15">15 min</option>
-        <option value="30">30 min</option>
-      </select>
-    </div>
+
     <div class="setting-row">
       <div class="setting-info"><div class="s-label">Reset at Midnight</div><div class="s-desc">Clear water &amp; medicine status each new day</div></div>
       <label class="toggle"><input type="checkbox" id="togAutoReset" checked><span class="toggle-slider"></span></label>
@@ -1318,7 +1309,7 @@ const AVATAR_COLOURS = [
 // ══════════════════════════════════════════════════════
 let state = {
   activeMemberId: null,
-  settings: { autoReset: true, reminders: true, leadTime: 5 },
+  settings: { autoReset: true, reminders: true },
   members: [],
   otherPersons: []
 };
@@ -1522,7 +1513,6 @@ function startAllSyncDaemons() {
 // ══════════════════════════════════════════════════════
 //  LIVE CLOCK
 // ══════════════════════════════════════════════════════
-let _lastMin = '';
 function tickClock(){
   const now = new Date();
   const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
@@ -1536,7 +1526,6 @@ function tickClock(){
   updateCountdowns(now);
 
   const hhmm = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
-  if(s===0 || hhmm!==_lastMin){ checkReminders(hhmm); }
 }
 
 // ══════════════════════════════════════════════════════
@@ -2167,7 +2156,6 @@ function loadSettingsUI(){
   [1,2,3,4].forEach(n=>{ document.getElementById('p'+n).value=(activeMember()?.presets||[150,250,350,500])[n-1]; });
   document.getElementById('togAutoReset').checked=state.settings?.autoReset!==false;
   document.getElementById('togReminders').checked=state.settings?.reminders!==false;
-  document.getElementById('leadTime').value=state.settings?.leadTime??5;
   updateNotifUI();renderMemberSettingsList();renderOtherPersonDashboard();
 }
 function saveSettings(){
@@ -2180,10 +2168,11 @@ function saveSettings(){
   }
   state.settings={
     autoReset:document.getElementById('togAutoReset').checked,
-    reminders:document.getElementById('togReminders').checked,
-    leadTime:parseInt(document.getElementById('leadTime').value)||5
+    reminders:document.getElementById('togReminders').checked
   };
   saveState();render();toast('Settings saved','ok');
+  // Re-sync schedule to backend — if reminders turned off, stop sending
+  saveScheduleToBackend();
 }
 function exportData(){
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
@@ -2195,42 +2184,7 @@ function hardReset(){
   localStorage.clear();location.reload();
 }
 
-// ── REMINDER ENGINE ──
-let _lastMin2='';
-function checkReminders(hhmm){
-  if(state.settings?.reminders===false)return;
-  const now=new Date();
-  const cur=hhmm||String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  if(cur===_lastMin2)return;_lastMin2=cur;
-  const lead=state.settings?.leadTime??5;
-  const nowMins=now.getHours()*60+now.getMinutes();
-  state.members.forEach(mb=>{
-    (mb.medicines||[]).forEach((m,i)=>{
-      (m.reminderTimes||[]).forEach(t=>{
-        if(m.takenTimes?.[t]||m.notifiedTimes?.[t])return;
-        const[h,mi]=t.split(':').map(Number);
-        const diff=(h*60+mi)-nowMins;
-        if(diff<=lead&&diff>=-2){
-          sendNotif(mb,m,t,diff);
-          if(!m.notifiedTimes) m.notifiedTimes = {};
-          m.notifiedTimes[t]=true;_rawSave();
-        }
-      });
-    });
-  });
-}
-function sendNotif(mb,med,time,diff){
-  const amt=med.kind==='liquid'?med.qty+' ml':med.qty+(med.qty==1?' tablet':' tablets');
-  const body=diff<=0?`Please take now — ${amt}. ${med.food||''}`
-    :`Due in ${diff} min at ${fmt12(time)} — ${amt}. ${med.food||''}`;
-  const title=`${mb.name}: Time for ${med.name}`;
-  if(window.Notification&&Notification.permission==='granted'){
-    const n=new Notification(title,{body,icon:'icons/icon-192.png',tag:`${mb.id}-${med.name}-${time}`,requireInteraction:true});
-    n.onclick=()=>window.focus();
-  } else {
-    toast(`Reminder: ${title} — ${body}`,'warn');
-  }
-}
+// Reminder engine removed — backend cron fires Web Push at exact medicine time
 function requestNotifPerms(){
   // Called from Settings — lets user manually enable notifications
   const me = state.members[0];
@@ -2874,38 +2828,36 @@ function showIOSInstallBanner() {
 // ══════════════════════════════════════════════════════════════
 async function saveScheduleToBackend() {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-  if (isIOS && !isPWA()) return;  // push not available yet on this device
+  if (isIOS && !isPWA()) return;
 
   try {
     const reg  = await navigator.serviceWorker.ready;
     const perm = Notification.permission;
-    if (perm !== 'granted') return;  // user hasn't allowed notifications yet
+    if (perm !== 'granted') return;
 
     let sub = await reg.pushManager.getSubscription();
-    if (!sub) return;  // not subscribed yet — subscribeToPush handles that
+    if (!sub) return;
 
     const me       = state.members[0];
     const userId   = me.id || 'user_' + generateChannelId(me.name + '_id');
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata';
 
-    // Only send medicines that have reminder times set
-    const medicines = (me.medicines || [])
-      .filter(m => m.reminderTimes && m.reminderTimes.length > 0)
-      .map(m => ({ name: m.name, reminderTimes: m.reminderTimes }));
+    // If reminders are turned off in settings, send empty medicines list
+    // so backend cron stops firing for this user
+    const remindersOn = state.settings?.reminders !== false;
+    const medicines = remindersOn
+      ? (me.medicines || [])
+          .filter(m => m.reminderTimes && m.reminderTimes.length > 0)
+          .map(m => ({ name: m.name, reminderTimes: m.reminderTimes }))
+      : [];
 
     await fetch(DAILYCARE_BACKEND_URL + '/save-schedule', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId,
-        name:         me.name,
-        subscription: sub.toJSON(),
-        timezone,
-        medicines
-      })
+      body: JSON.stringify({ userId, name: me.name, subscription: sub.toJSON(), timezone, medicines })
     });
 
-    console.log(`[DailyCare] Schedule saved — ${medicines.length} medicine(s) with reminders`);
+    console.log(`[DailyCare] Schedule saved — ${medicines.length} medicine(s) scheduled`);
   } catch(e) {
     console.warn('[DailyCare] saveScheduleToBackend failed:', e);
   }
