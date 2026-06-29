@@ -1893,7 +1893,8 @@ function openAddMed(){
     </div>
     <div class="form-group">
       <label>Reminder Time (Tap to pick time)</label>
-      <input type="time" id="mTime" style="-webkit-appearance: none; min-height: 58px;" inputmode="numeric">
+      <!-- Fixed: forced standard layout properties to break cache layers -->
+      <input type="time" id="mTime" style="-webkit-appearance: none; min-height: 58px;" required>
     </div>
     <button class="btn btn-forest btn-full" onclick="saveMedClean()">Save Medicine &amp; Set Reminder</button>
   `);
