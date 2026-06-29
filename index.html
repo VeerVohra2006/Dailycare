@@ -874,7 +874,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
   <!-- Top banner -->
   <div class="login-banner">
     <div class="login-brand">
-      <img src="icons/icon-512.png" alt="DailyCare Brand Icon" style="width:56px; height:52px; object-fit:contain;">
+      <div class="login-brand-icon">💊</div>
       <div class="login-brand-name">DailyCare</div>
     </div>
     <div class="login-brand-tagline">Family Medicine &amp; Hydration Tracker</div>
@@ -1086,7 +1086,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 <header>
   <div class="header-top">
     <div class="logo-wrap">
-      <img src="icons/icon-192.png" alt="DailyCare Logo" style="width:38px; height:38px; border-radius:10px; object-fit:contain; background:rgba(255,255,255,0.15); padding:4px;">
+      <div class="logo-icon" style="font-size:1rem;font-weight:900;letter-spacing:-1px;">DC</div>
       <div>
         <div class="logo-text">DailyCare</div>
         <div class="logo-sub">Family Medicine Tracker</div>
@@ -1301,8 +1301,8 @@ const STORE_KEY = 'dc_v5';
 const DATE_KEY  = 'dc_date_v5';
 const PUBLIC_RELAY_BASE    = 'https://ntfy.sh/dc_live_sync_';
 // ↓ Update both after deploying backend to Railway
-const DAILYCARE_BACKEND_URL = 'dailycare-backend-production.up.railway.app';
-const VAPID_PUBLIC_KEY      = 'BGmOm3_YglGLJ41x1i-uEAAY95vxvVvS3ltZpg1Rzb56a2z6rMegnfWkGAl92XnojpiVTw88Be5ijKlVSsrFiEs';
+const DAILYCARE_BACKEND_URL = 'https://your-backend.up.railway.app';
+const VAPID_PUBLIC_KEY      = 'BFfqTYxfvJRXEgv2yJ_rILUJ1mTHvo2L9LV3-iKGlIuNYU7s96zGr2p3KnEJZHvMMGpvdrsD5YaYU1M0vOO_Sfw';
 
 const MED_COLOURS = [
   '#1a4731','#2d7a55','#3b82c4','#7c3aed',
@@ -1883,85 +1883,10 @@ let _medDraft={},_medEditIdx=-1;
 
 function openAddMed(){
   if(activeMember()?.isPeer) return toast('External accounts are read-only','warn');
-  _medDraft = { name: '', kind: 'tablet', qty: 1, colour: MED_COLOURS[0], food: 'After meals', notes: '', reminderTimes: [] }; 
-  _medEditIdx = -1;
-  
-  openModal('Add a Medicine', `
-    <div class="form-group">
-      <label>Medicine Name</label>
-      <input type="text" id="mName" placeholder="e.g. Paracetamol">
-    </div>
-    <div class="form-group">
-      <label>Reminder Time (Tap to pick time)</label>
-      <!-- Fixed: forced standard layout properties to break cache layers -->
-      <input type="time" id="mTime" style="-webkit-appearance: none; min-height: 58px;" required>
-    </div>
-    <button class="btn btn-forest btn-full" onclick="saveMedClean()">Save Medicine &amp; Set Reminder</button>
-  `);
+  _medDraft={name:'',kind:'tablet',qty:1,colour:MED_COLOURS[0],food:'After meals',notes:'',reminderTimes:[]};
+  _medEditIdx=-1;
+  openModal('Add a Medicine',buildMedModal());showMedStep(0);
 }
-
-function saveMedClean() {
-  const mb = activeMember(); if(!mb || mb.isPeer) return;
-  const name = document.getElementById('mName').value.trim();
-  const clockTime = document.getElementById('mTime').value;
-
-  if(!name) return toast('Please enter the medicine name', 'err');
-  if(!clockTime) return toast('Please pick a time', 'err');
-
-  const obj = {
-    name: name,
-    kind: _medDraft.kind || 'tablet',
-    qty: 1,
-    food: 'After meals',
-    notes: '',
-    colour: MED_COLOURS[0],
-    reminderTimes: [clockTime],
-    takenTimes: {},
-    notifiedTimes: {}
-  };
-
-  mb.medicines.push(normMed(obj));
-  saveState(); 
-  render(); 
-  closeModal();
-  
-  // 1. Sync schedule with Railway server for background pushes
-  syncPushProfileToServer();
-  
-  // 2. Safe, cross-platform hardware handling
-  const isAndroid = /android/i.test(navigator.userAgent);
-  if (isAndroid) {
-    // Android intents still work fully natively
-    const [hours, minutes] = clockTime.split(':');
-    window.location.href = `intent://page/AlarmClock?hour=${hours}&minutes=${minutes}&message=${encodeURIComponent('Take ' + name)}&skipUi=false#Intent;scheme=android-app;end`;
-  } else {
-    // iOS: Let the server-side Web Push notifications handle the lock screen wake-up
-    toast(`✓ ${name} saved! The server will send a push reminder at ${fmt12(clockTime)}.`, 'ok');
-  }
-}
-
-  mb.medicines.push(normMed(obj));
-  saveState(); 
-  render(); 
-  closeModal();
-  
-  // 1. Sync schedule with Railway server for background pushes
-  syncPushProfileToServer();
-  
-  // 2. Instantly force launch your phone's native Clock/Alarm application
-  const [hours, minutes] = clockTime.split(':');
-  const isAndroid = /android/i.test(navigator.userAgent);
-  
-  if (isAndroid) {
-    // Automatically creates the alarm pre-filled with the time and label on Android
-    window.location.href = `intent://page/AlarmClock?hour=${hours}&minutes=${minutes}&message=${encodeURIComponent('Take ' + name)}&skipUi=false#Intent;scheme=android-app;end`;
-  } else {
-    // iOS deep link to launch Apple's native Clock App
-    window.location.href = 'clock-alarm://';
-    toast(`Clock app opened! Set an alarm for ${clockTime} labelled: Take ${name}`, 'ok');
-  }
-}
-
 function editMed(i){
   const mb=activeMember();if(!mb||mb.isPeer)return;
   _medDraft={...mb.medicines[i],reminderTimes:[...(mb.medicines[i].reminderTimes||[])]};
@@ -2094,12 +2019,9 @@ function saveMed(){
     mb.medicines[_medEditIdx]=normMed(obj);
   } else mb.medicines.push(normMed(obj));
   saveState();render();closeModal();
-  // Auto-set a native phone alarm for every reminder time chosen
-  if(obj.reminderTimes.length){
-    setTimeout(()=>setNativeAlarmsForMed(obj.name, obj.reminderTimes), 400);
-  } else {
-    toast(`${obj.name} ${_medEditIdx>=0?'updated':'added'}`,'ok');
-  }
+  toast(`${obj.name} ${_medEditIdx>=0?'updated':'added'}`,'ok');
+  // Sync updated schedule to backend so cron fires push at the right time
+  saveScheduleToBackend();
 }
 function takeMed(i,t){
   const mb=activeMember();if(!mb||mb.isPeer)return;
@@ -2124,63 +2046,10 @@ function deleteMed(i){
   const mb=activeMember();if(!mb||mb.isPeer)return;
   if(!confirm(`Delete "${mb.medicines[i].name}"?`))return;
   mb.medicines.splice(i,1);saveState();render();toast('Medicine deleted','warn');
+  saveScheduleToBackend();
 }
 
-function setNativeAlarm(timeString, medicineName) {
-  const [hours, minutes] = timeString.split(':');
-  const isAndroid = /android/i.test(navigator.userAgent);
-  if (isAndroid) {
-    window.location.href = `intent://page/AlarmClock?hour=${hours}&minutes=${minutes}&message=${encodeURIComponent('Take ' + medicineName)}&skipUi=false#Intent;scheme=android-app;end`;
-  } else {
-    // iOS: open Clock app directly; user saves the alarm themselves
-    window.location.href = 'clock-alarm://';
-    setTimeout(() => {
-      // Fallback if clock-alarm:// not handled — try calshow://
-    }, 300);
-    toast('Clock app opened — set alarm for ' + timeString + ' labelled: Take ' + medicineName, 'ok');
-  }
-}
-
-// Called after saving a medicine — sequences one alarm per time with a delay
-// so the OS has time to open, register, and return before the next one.
-function setNativeAlarmsForMed(medName, times) {
-  const isAndroid = /android/i.test(navigator.userAgent);
-  if (times.length === 0) return;
-
-  if (isAndroid) {
-    // Android: fire all alarms in sequence with 1.5s gaps
-    // Each intent opens Clock, pre-fills the alarm, user taps Save once
-    let i = 0;
-    function fireNext() {
-      if (i >= times.length) {
-        toast(medName + ' added. Tap Save in the Clock app for each alarm.', 'ok');
-        return;
-      }
-      setNativeAlarm(times[i], medName);
-      i++;
-      setTimeout(fireNext, 1500);
-    }
-    toast('Opening Clock app to set ' + times.length + ' alarm' + (times.length > 1 ? 's' : '') + ' for ' + medName + '…', 'ok');
-    setTimeout(fireNext, 300);
-  } else {
-    // iOS: open Clock app once; tell the user exactly what alarms to set
-    const timeList = times.map(t => fmt12(t)).join(', ');
-    window.location.href = 'clock-alarm://';
-    setTimeout(() => {
-      openModal('Set Alarms on iPhone', `
-        <div style="font-size:var(--t-md);color:var(--ink2);line-height:1.9;">
-          Your Clock app should have opened.<br><br>
-          Please set an alarm for each of these times and label it <b>"Take ${medName}"</b>:
-          <div style="margin:1rem 0;padding:1rem;background:var(--leaf-xlt);border-radius:var(--r-md);font-size:var(--t-lg);font-weight:900;color:var(--forest);text-align:center;letter-spacing:1px;">
-            ${timeList}
-          </div>
-          Tap <b>+</b> in the Clock app, set the time and label, then tap <b>Save</b>.
-        </div>
-        <button class="btn btn-forest btn-full" style="margin-top:1rem;" onclick="closeModal()">Got it</button>
-      `);
-    }, 500);
-  }
-}
+// Native OS alarm system removed — backend push handles all reminders
 
 // ── LOG ──
 function addLog(mb,icon,text,amount,colour){
@@ -2362,7 +2231,15 @@ function sendNotif(mb,med,time,diff){
     toast(`Reminder: ${title} — ${body}`,'warn');
   }
 }
-function requestNotifPerms(){ /* alarms handled natively */ }
+function requestNotifPerms(){
+  // Called from Settings — lets user manually enable notifications
+  const me = state.members[0];
+  if (!me) return;
+  // Use the first outbound peer secret, or a user-specific one
+  const outbound = (state.otherPersons || []).find(p => !p.isIncomingData && p.secret);
+  const secret   = outbound ? outbound.secret : (me.id + '_self');
+  subscribeToPush(secret).then(() => saveScheduleToBackend());
+}
 
 // ── MODAL ──
 function openModal(title,content){
