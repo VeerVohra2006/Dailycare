@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -248,9 +249,6 @@ main{padding:1rem 1rem 7rem;max-width:600px;margin:0 auto;}
 }
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.4;}}
 .cc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-top:0.9rem;}
-.cc-stats {
-  display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-top:0.9rem;
-}
 .cc-stat{
   background:rgba(255,255,255,0.1);border-radius:var(--r-md);
   padding:0.7rem 0.5rem;text-align:center;
@@ -852,7 +850,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .ping-btn.water{border-color:var(--sky);color:var(--sky);background:var(--sky-lt);}
 .ping-btn.water:active{background:var(--sky);color:white;}
 
-
 /* ═══ SIMPLE SHARE STYLES ═══ */
 .share-step{
   background:var(--leaf-xlt);border:2px dashed var(--leaf);
@@ -868,10 +865,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 </head>
 <body>
 
-<!-- ═══ LOGIN / PROFILE SETUP SCREEN ═══ -->
 <div id="loginScreen">
-
-  <!-- Top banner -->
   <div class="login-banner">
     <div class="login-brand">
       <div class="login-brand-icon">💊</div>
@@ -879,7 +873,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
     </div>
     <div class="login-brand-tagline">Family Medicine &amp; Hydration Tracker</div>
 
-    <!-- Step progress dots -->
     <div class="login-steps" id="loginStepDots">
       <div class="ls-step">
         <div class="ls-dot active" id="lsd1">1</div>
@@ -903,10 +896,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
     </div>
   </div>
 
-  <!-- White card — multi-step form -->
   <div class="login-card">
-
-    <!-- ── STEP 1: Personal Identity ── -->
     <div class="lc-step active" id="lstep1">
       <div class="lc-heading">👤 Personal Details</div>
       <div class="lc-sub">This helps us personalise your profile and medicine reminders.</div>
@@ -948,7 +938,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
       </div>
     </div>
 
-    <!-- ── STEP 2: Health Info ── -->
     <div class="lc-step" id="lstep2">
       <div class="lc-heading">❤️ Health Information</div>
       <div class="lc-sub">Stored only on this device. Helps doctors and family in an emergency.</div>
@@ -1005,7 +994,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
       </div>
     </div>
 
-    <!-- ── STEP 3: Emergency Contact ── -->
     <div class="lc-step" id="lstep3">
       <div class="lc-heading">🆘 Emergency Contact</div>
       <div class="lc-sub">Who should be called if something happens? This stays on your device only.</div>
@@ -1052,7 +1040,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
       </div>
     </div>
 
-    <!-- ── STEP 4: Review & Confirm ── -->
     <div class="lc-step" id="lstep4">
       <div class="lc-heading">✅ Review Your Profile</div>
       <div class="lc-sub">Everything looks right? You can always update this in Settings later.</div>
@@ -1068,10 +1055,8 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
         <button class="ln-next gold" onclick="doLogin()">🚀 Start Using DailyCare</button>
       </div>
     </div>
-
   </div>
 </div>
-
 
 <div class="toast-wrap" id="toastWrap"></div>
 
@@ -1132,7 +1117,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 </nav>
 
 <main>
-
 <div class="tab-panel active" id="tab-home">
   <div id="careCard"></div>
   <div class="card">
@@ -1214,7 +1198,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 </div>
 
 <div class="tab-panel" id="tab-settings">
-
   <div class="card">
     <div class="card-title">Family Members</div>
     <div id="memberSettingsList"></div>
@@ -1226,9 +1209,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
     <div style="font-size:var(--t-sm);color:var(--ink3);margin-bottom:0.9rem;line-height:1.65;">
       Share your medicines and water with a family member or doctor — they can <b>view only</b>, not edit.
     </div>
-    
     <div id="otherPersonDashboard" style="margin-bottom: 1rem;"></div>
-
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
       <button class="btn btn-forest btn-sm" onclick="openSimpleShareModal()">📤 Share My Profile</button>
       <button class="btn btn-gold btn-sm" onclick="openReceiveAccessModal()">👁 View Someone's Profile</button>
@@ -1238,13 +1219,16 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
   <div class="card">
     <div class="card-title">Reminders</div>
     <div class="setting-row">
-      <div class="setting-info"><div class="s-label">Push Notifications</div><div class="s-desc" id="notifDesc">Notifications are sent to your phone at the exact medicine time, even when the screen is locked.</div></div>
+      <div class="setting-info">
+        <div class="s-label">iOS PWA Lock Screen Alerts</div>
+        <div class="s-desc" id="notifDesc">Tap to register this iPhone with the backend reminder loop.</div>
+      </div>
+      <button class="btn btn-forest btn-sm" style="min-height: 44px; padding: 0 1rem;" onclick="enableIOSNotifications()">Activate</button>
     </div>
     <div class="setting-row">
       <div class="setting-info"><div class="s-label">Reminders On / Off</div><div class="s-desc">Turn off to stop all reminder alerts</div></div>
       <label class="toggle"><input type="checkbox" id="togReminders" checked><span class="toggle-slider"></span></label>
     </div>
-
     <div class="setting-row">
       <div class="setting-info"><div class="s-label">Reset at Midnight</div><div class="s-desc">Clear water &amp; medicine status each new day</div></div>
       <label class="toggle"><input type="checkbox" id="togAutoReset" checked><span class="toggle-slider"></span></label>
@@ -1280,7 +1264,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
       DailyCare v5 · All data saved only on this device.
     </div>
   </div>
-
 </div>
 </main>
 
@@ -1291,7 +1274,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 const STORE_KEY = 'dc_v5';
 const DATE_KEY  = 'dc_date_v5';
 const PUBLIC_RELAY_BASE    = 'https://ntfy.sh/dc_live_sync_';
-// ↓ Update both after deploying backend to Railway
 const DAILYCARE_BACKEND_URL = 'https://your-backend.up.railway.app';
 const VAPID_PUBLIC_KEY      = 'BFfqTYxfvJRXEgv2yJ_rILUJ1mTHvo2L9LV3-iKGlIuNYU7s96zGr2p3KnEJZHvMMGpvdrsD5YaYU1M0vOO_Sfw';
 
@@ -1304,9 +1286,6 @@ const AVATAR_COLOURS = [
   '#b45309','#0d7490','#be185d','#374151'
 ];
 
-// ══════════════════════════════════════════════════════
-//  STATE  — multi-member
-// ══════════════════════════════════════════════════════
 let state = {
   activeMemberId: null,
   settings: { autoReset: true, reminders: true },
@@ -1324,11 +1303,9 @@ function fmt12(t){
   return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;
 }
 
-// Unified dynamic tracking profile lookup across both local and verified remote matrices
 function activeMember() {
   const allAvailable = [
     ...state.members, 
-    // CRITICAL SECURITY VISIBILITY FILTER: Only map INBOUND follower streams into navigation views
     ...(state.otherPersons || []).filter(p => p.verified && p.isIncomingData)
   ];
   return allAvailable.find(m => m.id === state.activeMemberId) || allAvailable[0] || null;
@@ -1361,9 +1338,6 @@ function ensureDefaultMember(){
   }
 }
 
-// ══════════════════════════════════════════════════════
-//  PERSISTENCE & PIPELINE BRIDGE
-// ══════════════════════════════════════════════════════
 function loadState(){
   const raw = localStorage.getItem(STORE_KEY);
   const savedDate = localStorage.getItem(DATE_KEY);
@@ -1401,9 +1375,39 @@ function loadState(){
 }
 
 function _rawSave(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
-function saveState(){ _rawSave(); broadcastLocalProfiles(); }
+function saveState(){ _rawSave(); broadcastLocalProfiles(); syncPushProfileToServer(); }
 
-// Outbound Data Synchronization: Broadcast primary local states out to link network channels
+async function syncPushProfileToServer() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) return;
+
+    const me = state.members[0];
+    const seniorName = me?.name || 'Senior';
+    const serializedMeds = (me?.medicines || []).map(m => ({
+      name: m.name,
+      times: m.reminderTimes || []
+    }));
+
+    const outbound = (state.otherPersons || []).filter(p => !p.isIncomingData && p.secret);
+    for (const p of outbound) {
+      const channelId = generateChannelId(p.secret + '_push_v1');
+      await fetch(DAILYCARE_BACKEND_URL.replace(/\/$/, '') + '/save-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          channelId: channelId,
+          subscription: sub.toJSON(),
+          userName: seniorName,
+          medicines: serializedMeds
+        })
+      });
+    }
+  } catch (err) { console.warn('[Push Sync] Dynamic enrollment dropped:', err); }
+}
+
 async function broadcastLocalProfiles() {
   if (!state.otherPersons) return;
   const outboundCues = state.otherPersons.filter(p => !p.isIncomingData && p.secret);
@@ -1411,7 +1415,7 @@ async function broadcastLocalProfiles() {
   for (const node of outboundCues) {
     try {
       const channelId = generateChannelId(node.secret);
-      const personalAccount = state.members[0]; // Point directly to YOUR local main account
+      const personalAccount = state.members[0];
       
       const syncPayload = {
         updatedAt: Date.now(),
@@ -1434,11 +1438,10 @@ function generateChannelId(secret) {
   return Math.abs(hash).toString(36);
 }
 
-// Inbound Data Synchronization: SSE streaming for instant updates, poll as fallback
 function initializePeerListener(idx) {
   const profileNode = state.otherPersons[idx];
   if (!profileNode || !profileNode.secret || !profileNode.verified || !profileNode.isIncomingData) return;
-  if (window.activeSyncIntervals[profileNode.id]) return; // already running
+  if (window.activeSyncIntervals[profileNode.id]) return;
 
   const channelId = generateChannelId(profileNode.secret);
 
@@ -1463,8 +1466,6 @@ function initializePeerListener(idx) {
     renderMemberTabs();
   }
 
-  // ── Layer 1: SSE stream (instant push, fires as soon as sharer saves) ──
-  let sseActive = false;
   try {
     const sse = new EventSource(`${PUBLIC_RELAY_BASE}${channelId}/sse`);
     sse.onmessage = (e) => {
@@ -1473,13 +1474,10 @@ function initializePeerListener(idx) {
         if (packet.message) applyRemoteData(JSON.parse(packet.message));
       } catch (_) {}
     };
-    sse.onerror = () => { sse.close(); sseActive = false; };
-    sse.onopen = () => { sseActive = true; };
-    // Store SSE so we can close it on delete
+    sse.onerror = () => { sse.close(); };
     window.activeSyncIntervals[profileNode.id] = { sse, interval: null };
   } catch (_) {}
 
-  // ── Layer 2: Poll every 4s as fallback / initial load ──
   const pollTick = async () => {
     try {
       const res = await fetch(`${PUBLIC_RELAY_BASE}${channelId}/json?poll=1`);
@@ -1493,9 +1491,7 @@ function initializePeerListener(idx) {
     } catch (_) {}
   };
 
-  pollTick(); // immediate first load
-  // WhatsApp handles all reminders — no in-app listener needed
-  // Subscribe this device to push so caregiver can send reminders
+  pollTick();
   subscribeToPush(profileNode.secret);
   const interval = setInterval(pollTick, 4000);
 
@@ -1510,27 +1506,16 @@ function startAllSyncDaemons() {
   if (state.otherPersons) state.otherPersons.forEach((_, idx) => initializePeerListener(idx));
 }
 
-// ══════════════════════════════════════════════════════
-//  LIVE CLOCK
-// ══════════════════════════════════════════════════════
 function tickClock(){
   const now = new Date();
-  const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+  const h = now.getHours(), m = now.getMinutes();
   const ampm = h>=12?'PM':'AM';
-  document.getElementById('clockTime').textContent =
-    `${h%12||12}:${String(m).padStart(2,'0')}`;
+  document.getElementById('clockTime').textContent = `${h%12||12}:${String(m).padStart(2,'0')}`;
   document.getElementById('clockAmpm').textContent = ampm;
-  document.getElementById('clockDate').textContent =
-    now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
-
+  document.getElementById('clockDate').textContent = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
   updateCountdowns(now);
-
-  const hhmm = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
 }
 
-// ══════════════════════════════════════════════════════
-//  COUNTDOWN TIMERS (System Layout Overflow Repair)
-// ══════════════════════════════════════════════════════
 function updateCountdowns(now){
   const nowMins = now.getHours()*60 + now.getMinutes() + now.getSeconds()/60;
   document.querySelectorAll('[data-cd]').forEach(el=>{
@@ -1547,7 +1532,6 @@ function updateCountdowns(now){
       el.className='ss-cd ct-due';
     } else {
       const absS=Math.abs(diffSec), absMins=Math.floor(absS/60);
-      // REPAIR BOUNDS OVERFLOW: Keep display text short when highly overdue so cluster stays un-fragmented
       el.textContent = absMins>0 ? `${absMins}m ago` : `Now`;
       el.className='ss-cd ct-overdue';
     }
@@ -1560,7 +1544,7 @@ function updateCountdowns(now){
     const diffMins = (h*60+m) - nowMins;
     const diffSec  = Math.round(diffMins*60);
     if(diffSec>60){
-      const abs=Math.round(diffMins),hh=Math.floor(abs/60),mm=abs%60;
+      const abs=Math.round(diffMins),hh=Math.floor(abs/60);
       ccEl.textContent = hh>0?`in ${hh}h`:`in ${abs}m`;
       ccEl.className='cc-countdown';
     } else if(diffSec>0){
@@ -1573,9 +1557,6 @@ function updateCountdowns(now){
   }
 }
 
-// ══════════════════════════════════════════════════════
-//  RENDER
-// ══════════════════════════════════════════════════════
 function render(){
   renderMemberTabs();
   renderHome();
@@ -1584,22 +1565,17 @@ function render(){
   renderLog();
 }
 
-// ── MEMBER TABS ──
 function renderMemberTabs(){
   const wrap = document.getElementById('memberTabs');
   if(!wrap) return;
-
   const currentActive = state.activeMemberId;
 
-  // Render local accounts
   let tabsHtml = state.members.map(mb=>`
     <button class="member-tab ${mb.id===currentActive?'active':''}" onclick="switchMember('${mb.id}')">
       <div class="tab-avatar" style="background:${mb.avatarColour};">${mb.name[0].toUpperCase()}</div>
       <span>${mb.name}</span>
     </button>`).join('');
 
-  // Only show profiles you are VIEWING (incoming) — never show outgoing broadcast nodes as tabs.
-  // If you shared your profile to someone, that does NOT add their profile to your tabs.
   if (state.otherPersons && state.otherPersons.length > 0) {
     const viewingPeers = state.otherPersons.filter(p => p.verified && p.isIncomingData);
     tabsHtml += viewingPeers.map(p => `
@@ -1614,10 +1590,8 @@ function renderMemberTabs(){
   wrap.innerHTML = tabsHtml;
 }
 
-// ── HOME ──
 function renderHome(){
   const mb = activeMember(); if(!mb) return;
-  // Care Card
   const slots = [];
   (mb.medicines||[]).forEach((m,i)=>{
     (m.reminderTimes||[]).forEach(t=>{
@@ -1729,7 +1703,6 @@ function renderHomeGlass(mb){
     </button>`).join('');
 }
 
-// ── MEDS TAB ──
 function renderMeds(){
   const mb = activeMember(); if(!mb) return;
   const el = document.getElementById('medList');
@@ -1750,7 +1723,6 @@ function renderMeds(){
   }
   const nowMins=new Date().getHours()*60+new Date().getMinutes();
   slots.sort((a,b)=>{
-    // Overdue (not taken, past time) always first
     const nowM=new Date().getHours()*60+new Date().getMinutes();
     const getOv=s=>{ if(s.t==='_once'||!!s.m.takenTimes?.[s.t])return false; const[h,m]=s.t.split(':').map(Number);return(h*60+m)<nowM; };
     const aOv=getOv(a),bOv=getOv(b);
@@ -1797,7 +1769,6 @@ function renderMeds(){
   }).join('');
 }
 
-// ── WATER TAB ──
 function renderWater(){
   const mb=activeMember();if(!mb)return;
   const goal=mb.waterGoal||2000, pct=Math.min(100,Math.round((mb.waterMl/goal)*100));
@@ -1867,7 +1838,6 @@ function submitCustomWater(){
   saveState();render();closeModal();toast(`+${ml} ml of ${type} added`,'ok');
 }
 
-// ── MEDICINES ──
 let _medDraft={},_medEditIdx=-1;
 
 function openAddMed(){
@@ -1940,6 +1910,7 @@ function showMedStep(n){
   [0,1].forEach(i=>{ const d=document.getElementById('sd'+i); if(!d)return; d.classList.remove('active','done'); if(i===n)d.classList.add('active'); else if(i<n)d.classList.add('done'); });
   if(n===1) buildTimePicker();
 }
+// Fix native WebKit focus bug by stripping autofocus logic from step changes
 function medNext(){
   const name=document.getElementById('mName').value.trim();
   if(!name)return toast('Please enter the medicine name','err');
@@ -1969,7 +1940,7 @@ function buildTimePicker(){
     <div style="margin-top:0.9rem;">
       <label>Or enter an exact time:</label>
       <div style="display:flex;gap:0.65rem;margin-top:0.45rem;">
-        <input type="time" id="customTime" style="flex:1;">
+        <input type="time" id="customTime" style="flex:1; -webkit-appearance: none; min-height: 58px;" inputmode="numeric">
         <button class="btn btn-ghost btn-sm" onclick="addCustomTime()">＋ Add</button>
       </div>
     </div>
@@ -2009,7 +1980,6 @@ function saveMed(){
   } else mb.medicines.push(normMed(obj));
   saveState();render();closeModal();
   toast(`${obj.name} ${_medEditIdx>=0?'updated':'added'}`,'ok');
-  // Sync updated schedule to backend so cron fires push at the right time
   saveScheduleToBackend();
 }
 function takeMed(i,t){
@@ -2026,7 +1996,6 @@ function undoTakeMed(i,t){
   const key=t||'_once';
   if(!med.takenTimes||!(key in med.takenTimes))return toast('Already not taken','warn');
   delete med.takenTimes[key];
-  // Also clear notified flag so alarm can re-fire if needed
   if(med.notifiedTimes)delete med.notifiedTimes[key];
   addLog(mb,'',`Undid ${med.name}${t?' ('+fmt12(t)+')':''}`,'-1 dose','#d95f4b');
   saveState();render();toast(`${med.name} marked as not taken`,'warn');
@@ -2038,9 +2007,6 @@ function deleteMed(i){
   saveScheduleToBackend();
 }
 
-// Native OS alarm system removed — backend push handles all reminders
-
-// ── LOG ──
 function addLog(mb,icon,text,amount,colour){
   mb.log.unshift({icon,text,amount,colour,time:timeNow()});
   if(mb.log.length>80) mb.log=mb.log.slice(0,80);
@@ -2063,7 +2029,6 @@ function clearLog(){
   mb.log=[];saveState();renderLog();toast('History cleared','warn');
 }
 
-// ── MEMBER MANAGEMENT ──
 const RELATIONS=['Parent','Mother','Father','Grandparent','Grandmother','Grandfather',
   'Spouse','Partner','Sibling','Child','Myself','Other'];
 
@@ -2136,7 +2101,6 @@ function switchMember(id){
   state.activeMemberId=id;_rawSave();render();
 }
 
-// ── SETTINGS ──
 function renderMemberSettingsList(){
   const el=document.getElementById('memberSettingsList');if(!el)return;
   el.innerHTML=state.members.map(mb=>`
@@ -2171,7 +2135,6 @@ function saveSettings(){
     reminders:document.getElementById('togReminders').checked
   };
   saveState();render();toast('Settings saved','ok');
-  // Re-sync schedule to backend — if reminders turned off, stop sending
   saveScheduleToBackend();
 }
 function exportData(){
@@ -2184,18 +2147,14 @@ function hardReset(){
   localStorage.clear();location.reload();
 }
 
-// Reminder engine removed — backend cron fires Web Push at exact medicine time
 function requestNotifPerms(){
-  // Called from Settings — lets user manually enable notifications
   const me = state.members[0];
   if (!me) return;
-  // Use the first outbound peer secret, or a user-specific one
   const outbound = (state.otherPersons || []).find(p => !p.isIncomingData && p.secret);
   const secret   = outbound ? outbound.secret : (me.id + '_self');
   subscribeToPush(secret).then(() => saveScheduleToBackend());
 }
 
-// ── MODAL ──
 function openModal(title,content){
   document.getElementById('modalTitle').textContent=title;
   document.getElementById('modalContent').innerHTML=content;
@@ -2208,7 +2167,6 @@ function closeModal(){
 }
 document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
-// ── TOAST ──
 function toast(msg,type='ok'){
   const c=document.getElementById('toastWrap');
   const el=document.createElement('div');el.className='toast';
@@ -2217,7 +2175,6 @@ function toast(msg,type='ok'){
   setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),250);},2800);
 }
 
-// ── TABS ──
 function switchTab(name,btn){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -2226,15 +2183,11 @@ function switchTab(name,btn){
   if(name==='settings')loadSettingsUI();
 }
 
-// ── DAY RESET ──
 function checkDayReset(){
   const saved=localStorage.getItem(DATE_KEY);
   if(saved&&saved!==todayStr()){loadState();render();toast('Good morning! New day started','ok');}
 }
 
-// ══════════════════════════════════════════════════════
-//  LIVE WEB REAL-TIME COUPLING LOGIC (Unified Stream)
-// ══════════════════════════════════════════════════════
 function generateSecretKey() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ234567';
   let secret = '';
@@ -2250,19 +2203,8 @@ function getTOTPCode(secret) {
   return (seed % 1000000).toString().padStart(6, '0');
 }
 
-// ══════════════════════════════════════════════════════
-//  PING / NUDGE SYSTEM
-//  Viewer → Sharer: sends a medicine or water reminder
-//  over a dedicated ping channel (secret + "_ping" suffix)
-//  Sharer's device picks it up via SSE and shows a banner.
-// ══════════════════════════════════════════════════════
-
-// pingChannelId removed — not needed
-
 async function sendPing(peer, type) {
-  // Derive the same channelId the receiver used to save their subscription
   const channelId = generateChannelId(peer.secret + '_push_v1');
-
   try {
     const res = await fetch(DAILYCARE_BACKEND_URL + '/send-push', {
       method: 'POST',
@@ -2286,8 +2228,6 @@ async function sendPing(peer, type) {
     toast(`Backend unreachable — check your internet`, 'err');
   }
 }
-
-// Ping listener removed — WhatsApp handles all reminders
 
 function renderOtherPersonDashboard() {
   const container = document.getElementById('otherPersonDashboard');
@@ -2377,7 +2317,6 @@ function startBroadcastWatcher(name, secret) {
         presets: personalAccount.presets,
         medicines: personalAccount.medicines,
         log: personalAccount.log,
-
         handshakeAccepted: false
       };
       const res = await fetch(`${PUBLIC_RELAY_BASE}${channelId}/json?poll=1`);
@@ -2419,10 +2358,7 @@ function startBroadcastWatcher(name, secret) {
   window.broadcastTrackerInterval = setInterval(checkAndBroadcastTick, 3000);
 }
 
-function viewLiveCode(name, secret) {
-  openSimpleShareModal();
-}
-
+function viewLiveCode(name, secret) { openSimpleShareModal(); }
 function openReceiveAccessModal() {
   openModal('View Someone\'s Profile', `
     <div style="font-size:var(--t-md); color:var(--ink2); line-height:1.7; margin-bottom:1rem; text-align:center;">
@@ -2445,10 +2381,7 @@ async function verifyIncomingCode() {
   const code = (document.getElementById('rxCode').value || '').trim();
 
   if (!secret || !code) return toast('Please enter both the secret code and the PIN.', 'err');
-
-  if (code !== getTOTPCode(secret)) {
-    return toast('The PIN is incorrect or has expired — ask them to read you the current 6-digit number.', 'err');
-  }
+  if (code !== getTOTPCode(secret)) return toast('The PIN is incorrect or has expired.', 'err');
 
   const channelId = generateChannelId(secret);
   toast('Connecting…', 'ok');
@@ -2474,7 +2407,7 @@ async function verifyIncomingCode() {
       secret: secret,
       verified: true,
       isPeer: true,
-      isIncomingData: true, // this person RECEIVES — they see the sharer's data
+      isIncomingData: true,
       avatarColour: initialPayload ? initialPayload.avatarColour : '#3b82c4',
       waterMl: initialPayload ? initialPayload.waterMl : 0,
       waterGoal: initialPayload ? initialPayload.waterGoal : 2000,
@@ -2484,13 +2417,11 @@ async function verifyIncomingCode() {
       lastSyncTime: Date.now()
     };
 
-    // Send handshake acceptance back so the sharer knows someone connected
     const acceptPayload = { ...initialPayload, handshakeAccepted: true, updatedAt: Date.now() };
     await fetch(PUBLIC_RELAY_BASE + channelId, { method: 'POST', body: JSON.stringify(acceptPayload) });
 
     if (!state.otherPersons) state.otherPersons = [];
     state.otherPersons.push(newPeer);
-    // Stay on current member — don't auto-switch. The new tab is there if they want it.
     
     saveState();
     closeModal();
@@ -2498,17 +2429,13 @@ async function verifyIncomingCode() {
     initializePeerListener(peerIdx);
     render();
     toast(`✓ Connected! ${newPeer.name}'s profile now appears in the tabs above.`, 'ok');
-  } catch (e) {
-    toast('Could not connect. Make sure both the code and PIN are correct.', 'err');
-  }
+  } catch (e) { toast('Could not connect.', 'err'); }
 }
 
 function deleteOtherPerson(idx) {
   const p = state.otherPersons[idx];
   if (!p) return;
-  const msg = p.isIncomingData
-    ? `Stop viewing ${p.name}'s profile?`
-    : `Stop sharing your profile with "${p.name}"?`;
+  const msg = p.isIncomingData ? `Stop viewing ${p.name}'s profile?` : `Stop sharing your profile with "${p.name}"?`;
   if (!confirm(msg)) return;
   const targetId = p.id;
   
@@ -2524,13 +2451,8 @@ function deleteOtherPerson(idx) {
   toast(p.isIncomingData ? `Removed ${p.name}'s profile.` : `Stopped sharing with ${p.name}.`, 'warn');
 }
 
-// ══════════════════════════════════════════════════════
-//  LOGIN — multi-step profile setup, persisted
-// ══════════════════════════════════════════════════════
 const LOGIN_KEY = 'dc_login_name';
 const PROFILE_KEY = 'dc_user_profile';
-
-// Temporary form data collected across steps
 let _loginData = {};
 
 function selGender(el, val) {
@@ -2584,9 +2506,7 @@ function loginNext(step) {
   }
 }
 
-function loginBack(step) {
-  goLoginStep(step - 1);
-}
+function loginBack(step) { goLoginStep(step - 1); }
 
 function goLoginStep(n) {
   for (let i = 1; i <= 4; i++) {
@@ -2611,7 +2531,6 @@ function goLoginStep(n) {
       if (l) l.classList.remove('done');
     }
   }
-  // Scroll card to top
   const card = document.querySelector('.login-card');
   if (card) card.scrollTop = 0;
   document.getElementById('loginScreen').scrollTop = 0;
@@ -2623,52 +2542,23 @@ function buildLoginSummary() {
   const conds = [...(d.conditions || []), d.condOther].filter(Boolean).join(', ') || '—';
 
   document.getElementById('loginSummary').innerHTML = `
-    <div class="sg-item accent full">
-      <div class="sg-label">Full Name</div>
-      <div class="sg-val" style="font-size:var(--t-lg);">${fullName}</div>
-    </div>
-    <div class="sg-item">
-      <div class="sg-label">Age</div>
-      <div class="sg-val">${d.age || '—'} yrs</div>
-    </div>
-    <div class="sg-item">
-      <div class="sg-label">Gender</div>
-      <div class="sg-val">${d.gender || '—'}</div>
-    </div>
-    <div class="sg-item">
-      <div class="sg-label">Blood Group</div>
-      <div class="sg-val" style="color:var(--coral);">${d.bloodGroup || '—'}</div>
-    </div>
-    <div class="sg-item">
-      <div class="sg-label">Weight</div>
-      <div class="sg-val">${d.weight ? d.weight + ' ' + d.weightUnit : '—'}</div>
-    </div>
-    <div class="sg-item full">
-      <div class="sg-label">Conditions</div>
-      <div class="sg-val" style="white-space:normal;line-height:1.5;">${conds}</div>
-    </div>
-    <div class="sg-item full">
-      <div class="sg-label">Allergies</div>
-      <div class="sg-val" style="white-space:normal;">${d.allergies || '—'}</div>
-    </div>
-    <div class="sg-item">
-      <div class="sg-label">Emergency Contact</div>
-      <div class="sg-val">${d.ecName || '—'}</div>
-    </div>
-    <div class="sg-item">
-      <div class="sg-label">Contact Phone</div>
-      <div class="sg-val">${d.ecPhone || '—'}</div>
-    </div>
+    <div class="sg-item accent full"><div class="sg-label">Full Name</div><div class="sg-val" style="font-size:var(--t-lg);">${fullName}</div></div>
+    <div class="sg-item"><div class="sg-label">Age</div><div class="sg-val">${d.age || '—'} yrs</div></div>
+    <div class="sg-item"><div class="sg-label">Gender</div><div class="sg-val">${d.gender || '—'}</div></div>
+    <div class="sg-item"><div class="sg-label">Blood Group</div><div class="sg-val" style="color:var(--coral);">${d.bloodGroup || '—'}</div></div>
+    <div class="sg-item"><div class="sg-label">Weight</div><div class="sg-val">${d.weight ? d.weight + ' ' + d.weightUnit : '—'}</div></div>
+    <div class="sg-item full"><div class="sg-label">Conditions</div><div class="sg-val" style="white-space:normal;line-height:1.5;">${conds}</div></div>
+    <div class="sg-item full"><div class="sg-label">Allergies</div><div class="sg-val" style="white-space:normal;">${d.allergies || '—'}</div></div>
+    <div class="sg-item"><div class="sg-label">Emergency Contact</div><div class="sg-val">${d.ecName || '—'}</div></div>
+    <div class="sg-item"><div class="sg-label">Contact Phone</div><div class="sg-val">${d.ecPhone || '—'}</div></div>
     ${d.doctorName ? `<div class="sg-item full"><div class="sg-label">Doctor</div><div class="sg-val">${d.doctorName}${d.doctorPhone ? ' · ' + d.doctorPhone : ''}</div></div>` : ''}
   `;
 }
 
 function doLogin() {
   const fullName = [_loginData.firstName, _loginData.lastName].filter(Boolean).join(' ') || 'Me';
-  // Save login + full profile
   localStorage.setItem(LOGIN_KEY, fullName);
   localStorage.setItem(PROFILE_KEY, JSON.stringify(_loginData));
-  // Update the app member's name
   if (state.members.length > 0) {
     state.members[0].name = _loginData.firstName || fullName;
     saveState();
@@ -2690,7 +2580,6 @@ function checkLogin() {
   }
 }
 
-// Enter key on first name goes to age field
 document.addEventListener('DOMContentLoaded', () => {
   const fname = document.getElementById('lf_fname');
   if (fname) {
@@ -2699,11 +2588,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ══════════════════════════════════════════════════════
-//  SIMPLE SHARE MODAL (elderly-friendly, no label needed)
-// ══════════════════════════════════════════════════════
 function openSimpleShareModal() {
-  // Use the logged-in user's name automatically
   const profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
   const myName = profile.firstName || localStorage.getItem(LOGIN_KEY) || state.members[0]?.name || 'Me';
   const secretGenerated = generateSecretKey();
@@ -2714,7 +2599,6 @@ function openSimpleShareModal() {
       Show this code to the person you want to share with.<br>
       They will see <b style="color:var(--forest);">${myName}'s</b> medicines and water.
     </div>
-
     <div class="share-step">
       <div class="share-hint">Your secret code — they need to type this:</div>
       <div class="share-code-big" id="shareSecretDisp" style="font-size:1.2rem; word-break:break-all; letter-spacing:2px;">${secretGenerated}</div>
@@ -2726,15 +2610,7 @@ function openSimpleShareModal() {
       <div class="totp-progress-bar" style="margin:0;"><div class="totp-progress-fill" id="modalOtpProgress"></div></div>
       <div class="share-hint" style="margin-top:0.4rem;">They must enter the PIN <b>while it's still showing</b>.</div>
     </div>
-    <div style="text-align:center; color:var(--ink3); font-size:var(--t-sm); margin-top:0.5rem;">
-      ⏳ Waiting for them to connect…
-    </div>
-    <div style="margin-top:1rem; font-size:var(--t-xs); color:var(--ink4); background:var(--cream); border-radius:var(--r-md); padding:0.75rem; line-height:1.7;">
-      <b>Steps for them:</b><br>
-      1. Open DailyCare on their phone<br>
-      2. Go to <b>Settings → 👁 View Someone's Profile</b><br>
-      3. Type the code and the PIN above
-    </div>
+    <div style="text-align:center; color:var(--ink3); font-size:var(--t-sm); margin-top:0.5rem;">⏳ Waiting for them to connect…</div>
   `);
 
   startOtpDisplay(secretGenerated);
@@ -2747,7 +2623,47 @@ function copyShareSecret(secret) {
   });
 }
 
-// ── INIT ──
+// ── FIXED iOS PWA PERMISSION PROMPT UNLOCKER ──
+async function enableIOSNotifications() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    toast("This device or browser layout layer lacks Web Push support.", "err");
+    return;
+  }
+
+  const isInstalledPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isIOSDevice = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+  if (isIOSDevice && !isInstalledPWA) {
+    openModal('Action Required', `
+      <div style="font-size:var(--t-md); color:var(--ink2); line-height:1.7; text-align:center;">
+        <span style="font-size:2.5rem;">📲</span><br><br>
+        <b>iOS Layout Restriction:</b><br>
+        Web Push cannot be activated inside a generic Safari browser tab.<br><br>
+        Please tap your Safari <b>Share button (⬆️)</b> and choose <b>'Add to Home Screen'</b> first, then launch DailyCare from your home screen icon to activate alerts.
+      </div>
+      <button class="btn btn-forest btn-full" style="margin-top:1.2rem;" onclick="closeModal()">Got it</button>
+    `);
+    return;
+  }
+
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      toast('✓ Lock screen permissions approved!', 'ok');
+      
+      // Auto-initialize base subscription mapping to register this client to backend variables
+      const me = state.members[0];
+      const outbound = (state.otherPersons || []).find(p => !p.isIncomingData && p.secret);
+      const activeSecret = outbound ? outbound.secret : (me?.id ? me.id + '_self' : 'fallback_secret');
+      
+      await subscribeToPush(activeSecret);
+      document.getElementById('notifDesc').textContent = 'Native Alerts Active (IST Sync Routing)';
+    } else if (permission === 'denied') {
+      alert("Notifications are blocked. Please reset your Safari/PWA website settings to clear this block.");
+    }
+  } catch (err) { console.error("iOS Permission execution failed:", err); }
+}
+
 loadState();
 render();
 checkLogin();
@@ -2756,27 +2672,21 @@ setInterval(tickClock,1000);
 tickClock();
 setInterval(checkDayReset,60000);
 
-// ══════════════════════════════════════════════════════
-//  PWA ENGINE
-// ══════════════════════════════════════════════════════
 const UA        = navigator.userAgent;
 const isIOS     = /iphone|ipad|ipod/i.test(UA);
 const isAndroid = /android/i.test(UA);
-const isSafari  = /safari/i.test(UA) && !/chrome|crios|fxios/i.test(UA);
-const isIOSSafari = isIOS && isSafari;
 
-function isPWA() {
-  return window.matchMedia('(display-mode: standalone)').matches ||
-         window.navigator.standalone === true;
+function isPWA() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
+function updateNotifUI() {
+  const desc = document.getElementById('notifDesc');
+  if (desc) {
+    desc.textContent = Notification.permission === 'granted' ? 'Native Alerts Active (IST Sync Routing)' : 'Inactive — tap Activate to authorize lock screen pushes.';
+  }
 }
-function updateNotifUI() {}
 
-// ── iOS install gate ──
-// Shows a one-time banner telling iOS users to install the PWA
-// so Web Push works. Dismissed permanently via localStorage.
 function showIOSInstallBanner() {
   if (!isIOS) return;
-  if (isPWA()) return;                                    // already installed
+  if (isPWA()) return;
   if (localStorage.getItem('dc_ios_banner_dismissed')) return;
 
   const banner = document.createElement('div');
@@ -2791,8 +2701,7 @@ function showIOSInstallBanner() {
           Tap <b>Share</b> <span style="font-size:1.1rem;">⬆️</span> → <b>Add to Home Screen</b>
         </div>
         <button onclick="document.getElementById('iosBanner').remove();localStorage.setItem('dc_ios_banner_dismissed','1');"
-          style="margin-top:0.65rem;background:rgba(255,255,255,0.25);border:1.5px solid rgba(255,255,255,0.6);
-                 color:white;border-radius:8px;padding:6px 16px;font-size:0.9rem;font-weight:700;cursor:pointer;">
+          style="margin-top:0.65rem;background:rgba(255,255,255,0.25);border:1.5px solid rgba(255,255,255,0.6);color:white;border-radius:8px;padding:6px 16px;font-size:0.9rem;font-weight:700;cursor:pointer;">
           Got it, dismiss
         </button>
       </div>
@@ -2800,67 +2709,53 @@ function showIOSInstallBanner() {
 
   Object.assign(banner.style, {
     position:'fixed', bottom:'80px', left:'12px', right:'12px', zIndex:'8000',
-    background:'var(--forest)', color:'white',
-    borderRadius:'14px', padding:'1rem 1.1rem',
-    boxShadow:'0 8px 32px rgba(0,0,0,0.35)',
-    animation:'slideUpBanner 0.4s cubic-bezier(.22,1,.36,1)'
+    background:'var(--forest)', color:'white', borderRadius:'14px', padding:'1rem 1.1rem',
+    boxShadow:'0 8px 32px rgba(0,0,0,0.35)', animation:'slideUpBanner 0.4s cubic-bezier(.22,1,.36,1)'
   });
 
-  // Add keyframe if not present
   if (!document.getElementById('iosBannerStyle')) {
     const s = document.createElement('style');
     s.id = 'iosBannerStyle';
     s.textContent = '@keyframes slideUpBanner{from{transform:translateY(120%);opacity:0;}to{transform:translateY(0);opacity:1;}}';
     document.head.appendChild(s);
   }
-
   document.body.appendChild(banner);
 }
 
-// ── Push subscription ──
-// Called when receiver opens a shared profile tab.
-// Asks for notification permission, subscribes, and saves
-// the subscription to the backend keyed by channelId.
-// ══════════════════════════════════════════════════════════════
-//  SCHEDULE SYNC — sends senior's medicine times to backend
-//  so the cron job can fire Web Push at the exact time every day
-//  even when the phone is locked or the app is closed.
-// ══════════════════════════════════════════════════════════════
 async function saveScheduleToBackend() {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
   if (isIOS && !isPWA()) return;
 
   try {
     const reg  = await navigator.serviceWorker.ready;
-    const perm = Notification.permission;
-    if (perm !== 'granted') return;
+    if (Notification.permission !== 'granted') return;
 
     let sub = await reg.pushManager.getSubscription();
     if (!sub) return;
 
-    const me       = state.members[0];
-    const userId   = me.id || 'user_' + generateChannelId(me.name + '_id');
+    const me = state.members[0];
+    const userId   = me.id || 'user_fallback';
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata';
-
-    // If reminders are turned off in settings, send empty medicines list
-    // so backend cron stops firing for this user
     const remindersOn = state.settings?.reminders !== false;
+    
     const medicines = remindersOn
       ? (me.medicines || [])
           .filter(m => m.reminderTimes && m.reminderTimes.length > 0)
           .map(m => ({ name: m.name, reminderTimes: m.reminderTimes }))
       : [];
 
-    await fetch(DAILYCARE_BACKEND_URL + '/save-schedule', {
+    await fetch(DAILYCARE_BACKEND_URL.replace(/\/$/, '') + '/save-subscription', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, name: me.name, subscription: sub.toJSON(), timezone, medicines })
+      body: JSON.stringify({
+        channelId: userId,
+        subscription: sub.toJSON(),
+        userName: me.name || 'Senior',
+        medicines: medicines
+      })
     });
-
-    console.log(`[DailyCare] Schedule saved — ${medicines.length} medicine(s) scheduled`);
-  } catch(e) {
-    console.warn('[DailyCare] saveScheduleToBackend failed:', e);
-  }
+    console.log(`[DailyCare Sync] Saved — ${medicines.length} medicine nodes updated.`);
+  } catch(e) { console.warn('[DailyCare] Backend synchronization dropped:', e); }
 }
 
 async function subscribeToPush(secret) {
@@ -2868,7 +2763,6 @@ async function subscribeToPush(secret) {
     if (isIOS) showIOSInstallBanner();
     return;
   }
-
   if (isIOS && !isPWA()) {
     showIOSInstallBanner();
     return;
@@ -2887,25 +2781,27 @@ async function subscribeToPush(secret) {
       });
     }
 
-    // Save subscription for on-demand caregiver pings
     const channelId = generateChannelId(secret + '_push_v1');
-    await fetch(DAILYCARE_BACKEND_URL + '/save-subscription', {
+    const me = state.members[0];
+    const serializedMeds = (me?.medicines || []).map(m => ({
+      name: m.name,
+      times: m.reminderTimes || []
+    }));
+
+    await fetch(DAILYCARE_BACKEND_URL.replace(/\/$/, '') + '/save-subscription', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ channelId, subscription: sub.toJSON() })
+      body: JSON.stringify({
+        channelId: channelId,
+        subscription: sub.toJSON(),
+        userName: me?.name || 'Senior',
+        medicines: serializedMeds
+      })
     });
-
-    console.log('[DailyCare] Push subscription saved for channel', channelId.slice(0, 8));
-
-    // Also save the senior's own medicine schedule for cron reminders
     await saveScheduleToBackend();
-
-  } catch(e) {
-    console.warn('[DailyCare] Push subscribe failed:', e);
-  }
+  } catch(e) { console.warn('[DailyCare] Push enrollment skipped:', e); }
 }
 
-// VAPID key helper
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -2913,7 +2809,6 @@ function urlBase64ToUint8Array(base64String) {
   return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
 }
 
-// ── Register SW ──
 async function registerSW() {
   if (!('serviceWorker' in navigator)) return;
   try {
@@ -2922,11 +2817,7 @@ async function registerSW() {
   } catch(e) { console.warn('[DailyCare] SW:', e); }
 }
 registerSW();
-
-// Show iOS banner after a short delay (so it doesn't block initial load)
 setTimeout(showIOSInstallBanner, 3000);
-
-
 </script>
 </body>
 </html>
